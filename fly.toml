@@ -16,6 +16,14 @@ primary_region = 'bom'
   min_machines_running = 1
   processes = ['app']
 
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/v1/healthz"
+    protocol = "http"
+    timeout = "5s"
+
 [[vm]]
   memory = '1gb'
   cpu_kind = 'shared'
