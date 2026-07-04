@@ -1,0 +1,1225 @@
+<!--
+  Vera AI Bot — Developer Test Console
+  ======================================
+  Terminal 1 — start bot:
+    cd vera-bot && uvicorn bot:app --host 0.0.0.0 --port 8080
+
+  Terminal 2 — start score server:
+    cd vera-bot && python score_server.py
+
+  Browser — open this file directly in Chrome (no extra server needed)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vera Dev Console</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0d;--card:#141414;--card2:#1c1c1c;--border:#2a2a2a;
+  --accent:#f0e040;--success:#22c55e;--warn:#f59e0b;--danger:#ef4444;
+  --orange:#f97316;--blue:#3b82f6;
+  --text:#e8e8e2;--muted:#6b6b65;
+  --radius:10px;--radius-sm:6px;
+  --font:'system-ui',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;overflow:hidden}
+/* ── SCROLLBARS ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+/* ── TOP NAV ── */
+#nav{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;z-index:100}
+#nav .logo{display:flex;align-items:center;gap:8px}
+#nav .logo span.v{color:var(--accent);font-weight:700;font-size:16px}
+#nav .logo span.s{color:var(--muted);font-size:12px}
+#nav .logo span.tag{background:var(--border);color:var(--muted);font-size:10px;padding:2px 6px;border-radius:3px;font-family:var(--mono)}
+#nav .center{display:flex;align-items:center;gap:10px;font-size:12px}
+#nav .center .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+#nav .center .dot.green{background:var(--success)}
+#nav .center .dot.red{background:var(--danger)}
+#nav .right{display:flex;gap:8px}
+/* ── LAYOUT ── */
+#app{display:flex;height:calc(100vh - 44px);overflow:hidden}
+/* ── PANELS ── */
+.panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
+#left{width:280px;flex-shrink:0}
+#center{flex:1;min-width:0}
+#right{width:320px;flex-shrink:0;border-right:none;border-left:1px solid var(--border)}
+.panel-body{flex:1;overflow-y:auto;padding:12px}
+/* ── SECTIONS ── */
+.section{margin-bottom:16px}
+.section-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+/* ── CONTROLS ── */
+label{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+input[type=text],select,textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;padding:6px 8px;outline:none;transition:border-color .15s}
+input[type=text]:focus,select:focus,textarea:focus{border-color:#444}
+select option{background:var(--card2)}
+textarea{resize:vertical;min-height:60px;font-size:12px}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:12px;font-family:var(--font);cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap}
+.btn:hover{background:#252525;border-color:#3a3a3a}
+.btn:active{background:#1a1a1a}
+.btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.btn.primary:hover{background:#d4c438}
+.btn.danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+.btn.danger:hover{background:rgba(239,68,68,.1)}
+.btn.success{background:transparent;color:var(--success);border-color:var(--success)}
+.btn.small{padding:4px 8px;font-size:11px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap}
+/* ── STATUS DOT ── */
+.status-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.dot.green{background:var(--success)}
+.dot.red{background:var(--danger)}
+.dot.amber{background:var(--warn)}
+/* ── CTX COUNTS ── */
+#ctx-counts{display:flex;gap:10px;margin-top:6px}
+.ctx-badge{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:3px 7px;font-size:11px;font-family:var(--mono);color:var(--muted)}
+.ctx-badge span{color:var(--text);font-weight:600}
+/* ── SCENARIO QUICK BTNS ── */
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.scenario-btn{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px;color:var(--text);font-size:11px;cursor:pointer;text-align:left;transition:background .15s;line-height:1.3}
+.scenario-btn:hover{background:#252525;border-color:#3a3a3a}
+.scenario-btn .cat{font-size:10px;color:var(--muted);display:block}
+/* ── PROGRESS BAR ── */
+.progress-wrap{background:var(--border);border-radius:3px;height:4px;overflow:hidden;margin-top:4px}
+.progress-bar{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+/* ── CONVERSATION THREAD ── */
+#thread{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;gap:6px}
+.empty-state .main{font-size:14px;color:#555}
+.empty-state .sub{font-size:11px}
+/* ── MESSAGE BUBBLE ── */
+.msg{border-radius:var(--radius);padding:10px 12px;border-left:3px solid transparent;background:var(--card)}
+.msg.vera{border-left-color:var(--blue)}
+.msg.merchant{border-left-color:var(--accent);border-left:none;border-right:3px solid var(--accent)}
+.msg.customer{border-left-color:var(--success)}
+.msg.system{background:transparent;border:1px dashed var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:11px;text-align:center;padding:6px}
+.msg-header{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.role-tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}
+.role-tag.vera{background:rgba(59,130,246,.2);color:#60a5fa}
+.role-tag.merchant{background:rgba(240,224,64,.15);color:var(--accent)}
+.role-tag.customer{background:rgba(34,197,94,.15);color:var(--success)}
+.badge{font-size:10px;padding:2px 6px;border-radius:3px;font-family:var(--mono)}
+.badge.cta{background:rgba(59,130,246,.15);color:#93c5fd}
+.badge.intent-accept{background:rgba(34,197,94,.15);color:var(--success)}
+.badge.intent-reject{background:rgba(239,68,68,.15);color:var(--danger)}
+.badge.intent-auto{background:rgba(245,158,11,.15);color:var(--warn)}
+.badge.intent-hostile{background:rgba(239,68,68,.25);color:var(--danger)}
+.badge.intent-question{background:rgba(59,130,246,.15);color:#93c5fd}
+.badge.intent-neutral{background:var(--card2);color:var(--muted)}
+.badge.action-end{background:rgba(239,68,68,.15);color:var(--danger)}
+.badge.action-send{background:rgba(34,197,94,.15);color:var(--success)}
+.badge.action-wait{background:rgba(245,158,11,.15);color:var(--warn)}
+.badge.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.msg-body{font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.msg-meta{margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.msg-time{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.sup-key{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.rationale-toggle{font-size:10px;color:var(--blue);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:var(--font)}
+.rationale-body{font-size:11px;color:var(--muted);margin-top:6px;padding:6px 8px;background:var(--card2);border-radius:var(--radius-sm);display:none}
+.rationale-body.open{display:block}
+/* ── INLINE SCORE ── */
+.inline-score{margin-top:8px;padding:8px 10px;background:var(--card2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.inline-score .row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.inline-score .dim-name{font-size:10px;color:var(--muted);width:80px;flex-shrink:0}
+.score-bar-wrap{flex:1;background:var(--border);border-radius:2px;height:6px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.score-val{font-size:11px;font-family:var(--mono);width:28px;text-align:right;flex-shrink:0}
+/* ── COMPOSE AREA ── */
+#compose-area{padding:12px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0}
+.compose-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.quick-replies{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.qr-btn{font-size:11px;padding:4px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card2);color:var(--text);cursor:pointer;transition:background .12s}
+.qr-btn:hover{background:#252525}
+#compose-status{font-size:11px;color:var(--muted);min-height:16px}
+/* ── RIGHT PANEL TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:10px;font-size:12px;text-align:center;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:color .15s}
+.tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:#aaa}
+.tab-content{display:none;flex:1;overflow-y:auto;padding:12px;flex-direction:column;gap:10px}
+.tab-content.active{display:flex}
+/* ── SCORE CARD ── */
+#score-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+#score-card .header{font-size:12px;font-weight:600;margin-bottom:4px}
+#score-card .subheader{font-size:10px;color:var(--muted);margin-bottom:12px;font-family:var(--mono)}
+.score-dim{margin-bottom:10px}
+.score-dim-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.score-dim-name{font-size:11px;font-weight:600}
+.score-dim-val{font-size:12px;font-family:var(--mono)}
+.score-dim-bar{background:var(--border);border-radius:3px;height:8px;overflow:hidden;margin-bottom:2px}
+.score-dim-fill{height:100%;border-radius:3px;transition:width .5s}
+.score-dim-hint{font-size:10px;color:var(--muted);line-height:1.4}
+.score-total-box{text-align:center;padding:10px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);margin:10px 0}
+.score-total-num{font-size:32px;font-weight:700;font-family:var(--mono)}
+.score-total-grade{font-size:12px;color:var(--muted);margin-top:2px}
+.feedback-box{padding:8px 10px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:11px;line-height:1.5}
+.feedback-box .fb-row{display:flex;gap:6px;margin-bottom:4px}
+.feedback-box .fb-row:last-child{margin-bottom:0}
+.fb-icon{flex-shrink:0;width:14px}
+/* ── SESSION SUMMARY ── */
+#session-summary{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:10px}
+#session-summary .title{font-size:11px;font-weight:600;margin-bottom:8px;color:var(--muted)}
+#session-summary .row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)}
+#session-summary .row:last-child{border-bottom:none}
+/* ── LOG ── */
+#log-list{display:flex;flex-direction:column;gap:4px}
+.log-entry{padding:6px 8px;background:var(--card2);border-radius:var(--radius-sm);border-left:3px solid var(--border);cursor:pointer}
+.log-entry.ok{border-left-color:var(--success)}
+.log-entry.warn{border-left-color:var(--warn)}
+.log-entry.err{border-left-color:var(--danger)}
+.log-entry-header{display:flex;gap:6px;align-items:center;font-size:11px;font-family:var(--mono)}
+.log-entry-body{display:none;margin-top:6px;font-size:10px;font-family:var(--mono);color:var(--muted);white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto}
+.log-entry-body.open{display:block}
+.log-budget{font-size:10px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px;margin-bottom:8px}
+.log-budget .row{display:flex;justify-content:space-between;padding:2px 0}
+/* ── BANNER ── */
+.banner{padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;line-height:1.5;display:flex;align-items:flex-start;gap:8px}
+.banner.red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger)}
+.banner.amber{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--warn)}
+/* ── SPINNER ── */
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ── MODAL ── */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center}
+#modal-overlay.open{display:flex}
+#modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);width:760px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+#modal-header{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+#modal-header h2{font-size:15px;font-weight:600}
+#modal-body{flex:1;overflow-y:auto;padding:16px}
+#modal-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px}
+/* ── BATCH TABLE ── */
+#batch-table{width:100%;border-collapse:collapse;font-size:11px}
+#batch-table th{padding:6px 8px;text-align:left;color:var(--muted);border-bottom:1px solid var(--border);font-weight:500}
+#batch-table td{padding:5px 8px;border-bottom:1px solid rgba(42,42,42,.5);font-family:var(--mono)}
+#batch-table tr:hover td{background:var(--card2)}
+.cell-score{padding:2px 5px;border-radius:3px;text-align:center}
+/* ── HINT TEXT ── */
+.hint{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body>
+<!-- ── TOP NAV ── -->
+<div id="nav">
+  <div class="logo">
+    <span class="v">Vera</span>
+    <span class="s">Dev Console</span>
+    <span class="tag">v2.0</span>
+  </div>
+  <div class="center">
+    <div class="dot" id="nav-dot"></div>
+    <span id="nav-url" style="color:var(--muted);font-family:var(--mono)">Not connected</span>
+    <span id="nav-uptime" style="color:var(--muted);font-size:11px"></span>
+  </div>
+  <div class="right">
+    <button class="btn" onclick="openBatchModal()">&#9654; Run All 24 Scenarios</button>
+    <button class="btn danger" onclick="confirmClearAll()">Clear All</button>
+  </div>
+</div>
+
+<!-- ── BANNERS ── -->
+<div id="banner-bot"   style="display:none;margin:0"></div>
+<div id="banner-score" style="display:none;margin:0"></div>
+
+<!-- ── APP ── -->
+<div id="app">
+
+  <!-- LEFT PANEL -->
+  <div class="panel" id="left">
+    <div class="panel-body">
+
+      <!-- Section: Connection -->
+      <div class="section">
+        <div class="section-title">Server Connection</div>
+        <label>Bot URL</label>
+        <input type="text" id="bot-url" value="http://localhost:8080">
+        <label style="margin-top:6px">Score Server URL</label>
+        <input type="text" id="score-url" value="http://localhost:8090">
+        <div style="margin-top:8px">
+          <button class="btn primary" style="width:100%" onclick="connect()">Connect</button>
+        </div>
+        <div class="status-row">
+          <div class="dot" id="bot-dot"></div>
+          <span id="bot-status">Not connected</span>
+          <span id="bot-uptime" style="font-size:10px;color:var(--muted)"></span>
+        </div>
+        <div class="status-row">
+          <div class="dot" id="score-dot"></div>
+          <span id="score-status">Not connected</span>
+        </div>
+        <div id="ctx-counts">
+          <div class="ctx-badge">cat: <span id="cnt-cat">0</span></div>
+          <div class="ctx-badge">mer: <span id="cnt-mer">0</span></div>
+          <div class="ctx-badge">cust: <span id="cnt-cust">0</span></div>
+          <div class="ctx-badge">trg: <span id="cnt-trg">0</span></div>
+        </div>
+      </div>
+
+      <!-- Section: Load Context -->
+      <div class="section">
+        <div class="section-title">Load Context</div>
+        <label>Category</label>
+        <select id="sel-category" onchange="onCategoryChange()">
+          <option value="">-- select --</option>
+          <option value="dentists">Dentists</option>
+          <option value="salons">Salons &amp; Beauty</option>
+          <option value="restaurants">Restaurants &amp; Cafes</option>
+          <option value="gyms">Gyms &amp; Fitness</option>
+          <option value="pharmacies">Pharmacies</option>
+        </select>
+        <label style="margin-top:6px">Merchant</label>
+        <select id="sel-merchant" onchange="onMerchantChange()">
+          <option value="">-- select category first --</option>
+        </select>
+        <label style="margin-top:6px">Trigger Kind</label>
+        <select id="sel-trigger">
+          <option value="">-- select --</option>
+        </select>
+        <label style="margin-top:6px">Customer (optional)</label>
+        <select id="sel-customer">
+          <option value="">None (merchant-facing)</option>
+        </select>
+        <div style="margin-top:8px;display:flex;gap:6px">
+          <button class="btn primary" style="flex:1" onclick="pushContext()">
+            <span id="push-spinner" style="display:none" class="spinner"></span>
+            &#8593; Push Context
+          </button>
+          <button class="btn" onclick="pushAllSeed()" title="Push all 10 merchants + 5 categories + 15 customers">
+            Push All
+          </button>
+        </div>
+        <div id="push-status" class="hint" style="margin-top:4px">Context must be pushed before composing. The judge does this automatically during warmup.</div>
+        <div id="push-progress" style="display:none;margin-top:6px">
+          <div class="hint" id="push-progress-text">Pushing...</div>
+          <div class="progress-wrap"><div class="progress-bar" id="push-progress-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- Section: Quick Scenarios -->
+      <div class="section">
+        <div class="section-title">Quick Test Scenarios</div>
+        <div class="scenario-grid" id="scenario-grid"></div>
+      </div>
+
+      <!-- Section: Danger Zone -->
+      <div class="section">
+        <div class="section-title">Danger Zone</div>
+        <button class="btn danger" style="width:100%" onclick="confirmTeardown()">&#128465; Teardown (Clear All)</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="panel" id="center" style="display:flex;flex-direction:column">
+    <!-- Center top bar -->
+    <div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--card)">
+      <span style="font-size:11px;color:var(--muted)">Conv:</span>
+      <span id="conv-id-display" style="font-size:11px;font-family:var(--mono);color:var(--text)">—</span>
+      <span id="trigger-kind-badge" class="badge cta" style="display:none"></span>
+      <span id="send-as-badge" class="badge intent-neutral" style="display:none"></span>
+      <div style="flex:1"></div>
+      <button class="btn small" onclick="newConversation()">New Conversation</button>
+    </div>
+
+    <!-- Thread -->
+    <div id="thread">
+      <div class="empty-state" id="thread-empty">
+        <div class="main">Push context then click Compose Message</div>
+        <div class="sub">Or use a Quick Test Scenario from the left panel</div>
+      </div>
+    </div>
+
+    <!-- Compose area -->
+    <div id="compose-area">
+      <div class="compose-row">
+        <button class="btn primary" style="flex-shrink:0" onclick="composeTick()" id="btn-compose">
+          <span id="compose-spinner" style="display:none" class="spinner"></span>
+          &#9654; Compose Message
+        </button>
+        <div style="font-size:10px;color:var(--muted);align-self:center">Judge timeout: 15s for tick/reply (from judge_simulator.py)</div>
+      </div>
+      <div class="quick-replies" id="quick-replies" style="display:none">
+        <span style="font-size:10px;color:var(--muted);align-self:center;margin-right:4px">Quick reply:</span>
+        <button class="qr-btn" onclick="sendQuickReply('yes')">&#10003; Yes</button>
+        <button class="qr-btn" onclick="sendQuickReply('no')">&#10007; No</button>
+        <button class="qr-btn" onclick="sendQuickReply('auto')">&#129302; Auto-reply</button>
+        <button class="qr-btn" onclick="sendQuickReply('question')">&#10067; Question</button>
+        <button class="qr-btn" onclick="sendQuickReply('hostile')">&#128162; Hostile</button>
+        <button class="qr-btn" onclick="sendQuickReply('offtopic')">&#128256; Off-topic</button>
+        <button class="qr-btn" onclick="sendQuickReply('hindi_yes')">&#127470;&#127475; Hindi YES</button>
+      </div>
+      <div class="compose-row">
+        <textarea id="reply-input" placeholder="Simulate merchant reply..." style="flex:1;height:52px"></textarea>
+        <button class="btn" onclick="sendReply()" style="flex-shrink:0;align-self:flex-end">Send</button>
+      </div>
+      <div id="compose-status"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel" id="right">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('score')" id="tab-score">Score</div>
+      <div class="tab" onclick="switchTab('log')" id="tab-log">Log</div>
+    </div>
+    <div class="tab-content active" id="tc-score">
+      <div id="score-empty" style="color:var(--muted);font-size:12px;text-align:center;padding:20px">
+        Score appears after first message is composed.<br>
+        <span style="font-size:10px">Scoring uses the exact LLMScorer prompt from judge_simulator.py.</span>
+      </div>
+      <div id="score-card" style="display:none">
+        <div class="header" id="sc-header">Message Quality Score</div>
+        <div class="subheader" id="sc-subheader"></div>
+        <div id="sc-dims"></div>
+        <div class="score-total-box">
+          <div class="score-total-num" id="sc-total">—</div>
+          <div class="score-total-grade" id="sc-grade"></div>
+        </div>
+        <div class="feedback-box" id="sc-feedback"></div>
+      </div>
+      <div id="session-summary" style="display:none">
+        <div class="title">Session Summary</div>
+        <div id="ss-rows"></div>
+      </div>
+      <div class="hint" style="padding:0 2px">Scoring uses the exact LLMScorer prompt from judge_simulator.py. Scores match what the real judge sees.</div>
+    </div>
+    <div class="tab-content" id="tc-log">
+      <div class="log-budget">
+        <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">TIMEOUT BUDGETS</div>
+        <div class="row"><span>healthz / metadata</span><span style="color:var(--success)">2s</span></div>
+        <div class="row"><span>context push</span><span style="color:var(--warn)">5s</span></div>
+        <div class="row"><span>tick / reply</span><span style="color:var(--danger)">15s</span></div>
+      </div>
+      <div id="log-list"></div>
+    </div>
+  </div>
+
+</div><!-- end #app -->
+
+<!-- BATCH MODAL -->
+<div id="modal-overlay">
+  <div id="modal">
+    <div id="modal-header">
+      <h2>Batch Score Test</h2>
+      <button class="btn small" onclick="closeModal()">&#10005; Close</button>
+    </div>
+    <div id="modal-body">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Testing all 24 trigger kinds against sample merchants &mdash; takes ~8 minutes. Rate limited to 3s between calls.</div>
+      <div id="batch-progress-wrap" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px">
+          <span id="batch-progress-label">Ready</span>
+          <span id="batch-progress-pct">0 / 24</span>
+        </div>
+        <div class="progress-wrap" style="height:8px"><div class="progress-bar" id="batch-progress-bar" style="width:0%"></div></div>
+      </div>
+      <div id="batch-summary" style="display:none;margin-bottom:12px;padding:10px;background:var(--card2);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:12px"></div>
+      <table id="batch-table">
+        <thead><tr>
+          <th>Trigger Kind</th><th>Category</th>
+          <th>DQ</th><th>SP</th><th>CF</th><th>MF</th><th>EC</th><th>Total</th>
+        </tr></thead>
+        <tbody id="batch-tbody"></tbody>
+      </table>
+    </div>
+    <div id="modal-footer">
+      <button class="btn primary" id="btn-batch-run" onclick="runBatch()">&#9654; Start Batch Test</button>
+      <button class="btn" id="btn-batch-export" style="display:none" onclick="exportBatch()">&#8595; Download Results JSON</button>
+      <div id="batch-status" style="font-size:11px;color:var(--muted)"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const MERCHANTS_DATA=[
+{merchant_id:'m_001_drmeera_dentist_delhi',category_slug:'dentists',identity:{name:"Dr. Meera's Dental Clinic",city:'Delhi',locality:'Lajpat Nagar',verified:true,languages:['en','hi'],owner_first_name:'Meera'},subscription:{status:'active',plan:'Pro',days_remaining:82},performance:{views:2410,calls:18,ctr:0.021,delta_7d:{views_pct:0.18,calls_pct:-0.05}},offers:[{id:'o_meera_001',title:'Dental Cleaning @ Rs299',status:'active'}],customer_aggregate:{total_unique_ytd:540,lapsed_180d_plus:78,retention_6mo_pct:0.38,high_risk_adult_count:124},signals:['stale_posts:22d','ctr_below_peer_median','high_risk_adult_cohort'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_002_bharat_dentist_mumbai',category_slug:'dentists',identity:{name:'Bharat Dental Care',city:'Mumbai',locality:'Andheri West',verified:false,languages:['en','hi','mr'],owner_first_name:'Bharat'},subscription:{status:'active',plan:'Pro',days_remaining:12},performance:{views:980,calls:4,ctr:0.018,delta_7d:{views_pct:-0.22,calls_pct:-0.50}},offers:[],signals:['renewal_due_soon:12d','perf_dip_severe','unverified_gbp'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_003_studio11_salon_hyderabad',category_slug:'salons',identity:{name:'Studio11 Family Salon',city:'Hyderabad',locality:'Kapra',verified:true,languages:['en','hi','te'],owner_first_name:'Lakshmi'},subscription:{status:'active',plan:'Pro',days_remaining:145},performance:{views:4980,calls:62,ctr:0.048,delta_7d:{views_pct:0.14,calls_pct:0.20}},offers:[{id:'o_s11_001',title:'Haircut @ Rs99',status:'active'},{id:'o_s11_002',title:'Hair Spa @ Rs499',status:'active'}],signals:['high_engagement','above_peer_median_calls'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_004_glamour_salon_pune',category_slug:'salons',identity:{name:'Glamour Lounge Spa',city:'Pune',locality:'Aundh',verified:true,languages:['en','hi','mr'],owner_first_name:'Anjali'},subscription:{status:'expired',plan:'Pro',days_since_expiry:38},performance:{views:1200,calls:8,ctr:0.022,delta_7d:{views_pct:-0.12}},offers:[],signals:['winback_eligible','dormant_with_vera_38d'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_005_pizzajunction_restaurant_delhi',category_slug:'restaurants',identity:{name:'SK Pizza Junction',city:'Delhi',locality:'Sant Nagar',verified:false,languages:['en','hi'],owner_first_name:'Suresh'},subscription:{status:'trial',plan:'Trial',days_remaining:7},performance:{views:2200,calls:12,ctr:0.020,delta_7d:{views_pct:0.08}},offers:[{id:'o_skpz_001',title:'Buy 1 Pizza Get 1 Free (Tue-Thu)',status:'active'}],signals:['new_merchant','trial_ending_soon','ipl_eligible_locality'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_006_southindiancafe_restaurant_bangalore',category_slug:'restaurants',identity:{name:'Mylari South Indian Cafe',city:'Bangalore',locality:'Indiranagar',verified:true,languages:['en','hi','kn'],owner_first_name:'Suresh'},subscription:{status:'active',plan:'Pro',days_remaining:240},performance:{views:12400,calls:88,ctr:0.032,delta_7d:{views_pct:0.05}},offers:[{id:'o_mylari_001',title:'Weekday Lunch Thali @ Rs149',status:'active'}],signals:['high_volume','stable_growth'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_007_powerhouse_gym_bangalore',category_slug:'gyms',identity:{name:'PowerHouse Fitness',city:'Bangalore',locality:'HSR Layout',verified:true,languages:['en','hi','kn'],owner_first_name:'Karthik'},subscription:{status:'active',plan:'Pro',days_remaining:95},performance:{views:1480,calls:22,ctr:0.052,delta_7d:{views_pct:-0.30,calls_pct:-0.35}},offers:[{id:'o_ph_001',title:'3 FREE Trial Classes',status:'active'}],signals:['seasonal_dip_apr_may','above_peer_ctr'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_008_zenyoga_gym_chennai',category_slug:'gyms',identity:{name:'Zen Yoga Studio',city:'Chennai',locality:'Mylapore',verified:true,languages:['en','ta','hi'],owner_first_name:'Padma'},subscription:{status:'active',plan:'Pro',days_remaining:180},performance:{views:880,calls:18,ctr:0.062,delta_7d:{views_pct:0.10}},offers:[{id:'o_zen_001',title:'First Month @ Rs499',status:'active'}],signals:['high_retention','boutique_segment'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_009_apollo_pharmacy_jaipur',category_slug:'pharmacies',identity:{name:'Apollo Health Plus Pharmacy',city:'Jaipur',locality:'Malviya Nagar',verified:true,languages:['en','hi'],owner_first_name:'Ramesh'},subscription:{status:'active',plan:'Pro',days_remaining:60},performance:{views:1850,calls:38,ctr:0.045,delta_7d:{views_pct:0.06}},offers:[{id:'o_ap_001',title:'Free Home Delivery > Rs499',status:'active'},{id:'o_ap_002',title:'Senior Citizen 15% OFF',status:'active'}],signals:['above_peer_calls','high_repeat_rate'],review_themes:[],conversation_history:[]},
+{merchant_id:'m_010_sunrisepharm_pharmacy_lucknow',category_slug:'pharmacies',identity:{name:'Sunrise Medicos',city:'Lucknow',locality:'Gomti Nagar',verified:false,languages:['en','hi'],owner_first_name:'Vikas'},subscription:{status:'active',plan:'Basic',days_remaining:200},performance:{views:720,calls:14,ctr:0.041,delta_7d:{views_pct:0.02}},offers:[],signals:['unverified_gbp','no_active_offers'],review_themes:[],conversation_history:[]}
+];
+const TRIGGERS_DATA=[
+{id:'trg_001_research_digest_dentists',scope:'merchant',kind:'research_digest',source:'external',merchant_id:'m_001_drmeera_dentist_delhi',customer_id:null,payload:{category:'dentists',top_item_id:'d_2026W17_jida_fluoride'},urgency:2,suppression_key:'research:dentists:2026-W17'},
+{id:'trg_002_compliance_dci_radiograph',scope:'merchant',kind:'regulation_change',source:'external',merchant_id:'m_001_drmeera_dentist_delhi',customer_id:null,payload:{category:'dentists',top_item_id:'d_2026W17_dci_radiograph',deadline_iso:'2026-12-15'},urgency:4,suppression_key:'compliance:dci_radiograph:2026'},
+{id:'trg_003_recall_due_priya',scope:'customer',kind:'recall_due',source:'internal',merchant_id:'m_001_drmeera_dentist_delhi',customer_id:'c_001_priya_for_m001',payload:{service_due:'6_month_cleaning',last_service_date:'2026-05-12',due_date:'2026-11-12'},urgency:3,suppression_key:'recall:c_001_priya:6mo'},
+{id:'trg_004_perf_dip_bharat',scope:'merchant',kind:'perf_dip',source:'internal',merchant_id:'m_002_bharat_dentist_mumbai',customer_id:null,payload:{metric:'calls',delta_pct:-0.50,window:'7d'},urgency:4,suppression_key:'perf_dip:m_002:calls:2026-W17'},
+{id:'trg_005_renewal_due_bharat',scope:'merchant',kind:'renewal_due',source:'internal',merchant_id:'m_002_bharat_dentist_mumbai',customer_id:null,payload:{days_remaining:12,plan:'Pro',renewal_amount:4999},urgency:4,suppression_key:'renewal:m_002:2026-Q2'},
+{id:'trg_006_festival_diwali',scope:'merchant',kind:'festival_upcoming',source:'external',merchant_id:'m_003_studio11_salon_hyderabad',customer_id:null,payload:{festival:'Diwali',date:'2026-10-31',days_until:188},urgency:1,suppression_key:'festival:diwali:2026:m_003'},
+{id:'trg_007_bridal_followup_kavya',scope:'customer',kind:'wedding_package_followup',source:'internal',merchant_id:'m_003_studio11_salon_hyderabad',customer_id:'c_005_kavya_for_m003',payload:{wedding_date:'2026-11-08',trial_completed:'2026-03-22',days_to_wedding:196},urgency:2,suppression_key:'bridal_followup:c_005_kavya'},
+{id:'trg_008_curious_ask_studio11',scope:'merchant',kind:'curious_ask_due',source:'internal',merchant_id:'m_003_studio11_salon_hyderabad',customer_id:null,payload:{ask_template:'what_service_in_demand_this_week'},urgency:1,suppression_key:'curious_ask:m_003:2026-W17'},
+{id:'trg_009_winback_glamour',scope:'merchant',kind:'winback_eligible',source:'internal',merchant_id:'m_004_glamour_salon_pune',customer_id:null,payload:{days_since_expiry:38,perf_dip_pct:-0.30,lapsed_customers_added_since_expiry:24},urgency:2,suppression_key:'winback:m_004'},
+{id:'trg_010_ipl_match_delhi',scope:'merchant',kind:'ipl_match_today',source:'external',merchant_id:'m_005_pizzajunction_restaurant_delhi',customer_id:null,payload:{match:'DC vs MI',venue:'Arun Jaitley Stadium',city:'Delhi',match_time_iso:'2026-04-26T19:30:00+05:30',is_weeknight:false},urgency:3,suppression_key:'ipl:m_005:2026-04-26'},
+{id:'trg_011_review_theme_late_delivery',scope:'merchant',kind:'review_theme_emerged',source:'internal',merchant_id:'m_005_pizzajunction_restaurant_delhi',customer_id:null,payload:{theme:'delivery_late',occurrences_30d:4,trend:'rising',common_quote:'took 50 mins for a 15 min ride'},urgency:3,suppression_key:'review_theme:m_005:delivery_late'},
+{id:'trg_012_milestone_mylari',scope:'merchant',kind:'milestone_reached',source:'internal',merchant_id:'m_006_southindiancafe_restaurant_bangalore',customer_id:null,payload:{metric:'review_count',value_now:145,milestone_value:150,is_imminent:true},urgency:1,suppression_key:'milestone:m_006:reviews_150'},
+{id:'trg_013_corporate_thali_planning',scope:'merchant',kind:'active_planning_intent',source:'internal',merchant_id:'m_006_southindiancafe_restaurant_bangalore',customer_id:null,payload:{intent_topic:'corporate_bulk_thali_package',merchant_last_message:'Yes good idea, what would it look like'},urgency:4,suppression_key:'planning:m_006:corp_thali'},
+{id:'trg_014_seasonal_dip_powerhouse',scope:'merchant',kind:'seasonal_perf_dip',source:'internal',merchant_id:'m_007_powerhouse_gym_bangalore',customer_id:null,payload:{metric:'views',delta_pct:-0.30,window:'7d',is_expected_seasonal:true,season_note:'post_resolution_window_apr_jun'},urgency:1,suppression_key:'seasonal_dip:m_007:2026-Q2'},
+{id:'trg_015_winback_rashmi',scope:'customer',kind:'customer_lapsed_hard',source:'internal',merchant_id:'m_007_powerhouse_gym_bangalore',customer_id:'c_010_rashmi_for_m007',payload:{days_since_last_visit:57,previous_focus:'weight_loss',previous_membership_months:5},urgency:3,suppression_key:'winback:c_010_rashmi'},
+{id:'trg_016_kids_yoga_planning',scope:'merchant',kind:'active_planning_intent',source:'internal',merchant_id:'m_008_zenyoga_gym_chennai',customer_id:null,payload:{intent_topic:'kids_yoga_summer_camp',merchant_last_message:'Hi I want to add a kids yoga program'},urgency:4,suppression_key:'planning:m_008:kids_yoga'},
+{id:'trg_017_trial_followup_karthik',scope:'customer',kind:'trial_followup',source:'internal',merchant_id:'m_008_zenyoga_gym_chennai',customer_id:'c_012_karthik_jr_for_m008',payload:{trial_date:'2026-04-22',next_session_options:[{label:'Sat 3 May, 8am'}]},urgency:2,suppression_key:'trial_followup:c_012'},
+{id:'trg_018_supply_atorvastatin',scope:'merchant',kind:'supply_alert',source:'external',merchant_id:'m_009_apollo_pharmacy_jaipur',customer_id:null,payload:{alert_id:'d_2026W17_atorvastatin_recall',molecule:'atorvastatin',affected_batches:['AT2024-1102','AT2024-1108'],manufacturer:'MfrZ'},urgency:5,suppression_key:'alert:atorvastatin:2026-04'},
+{id:'trg_019_chronic_refill_grandfather',scope:'customer',kind:'chronic_refill_due',source:'internal',merchant_id:'m_009_apollo_pharmacy_jaipur',customer_id:'c_013_grandfather_for_m009',payload:{molecule_list:['metformin','atorvastatin','telmisartan'],last_refill:'2026-03-26',stock_runs_out_iso:'2026-04-28T00:00:00+05:30',delivery_address_saved:true},urgency:3,suppression_key:'refill:c_013:2026-04'},
+{id:'trg_020_summer_demand_shift',scope:'merchant',kind:'category_seasonal',source:'external',merchant_id:'m_009_apollo_pharmacy_jaipur',customer_id:null,payload:{season:'summer_2026',trends:['ORS_demand_+40','sunscreen_demand_+38','antifungal_demand_+45'],shelf_action_recommended:true},urgency:2,suppression_key:'season:summer:m_009:2026'},
+{id:'trg_021_unverified_gbp_sunrise',scope:'merchant',kind:'gbp_unverified',source:'internal',merchant_id:'m_010_sunrisepharm_pharmacy_lucknow',customer_id:null,payload:{verified:false,verification_path:'postcard_or_phone_call',estimated_uplift_pct:0.30},urgency:3,suppression_key:'unverified:m_010'},
+{id:'trg_022_cde_webinar_dentists',scope:'merchant',kind:'cde_opportunity',source:'external',merchant_id:'m_001_drmeera_dentist_delhi',customer_id:null,payload:{digest_item_id:'d_2026W17_ida_webinar',credits:2,fee:'free_for_members'},urgency:1,suppression_key:'cde:dentists:2026-05-02'},
+{id:'trg_023_competitor_opened_dentist',scope:'merchant',kind:'competitor_opened',source:'external',merchant_id:'m_001_drmeera_dentist_delhi',customer_id:null,payload:{competitor_name:'Smile Studio',distance_km:1.3,their_offer:'Dental Cleaning @ Rs199',opened_date:'2026-04-08'},urgency:2,suppression_key:'competitor:m_001:smile_studio'},
+{id:'trg_024_perf_spike_zen',scope:'merchant',kind:'perf_spike',source:'internal',merchant_id:'m_008_zenyoga_gym_chennai',customer_id:null,payload:{metric:'calls',delta_pct:0.15,window:'7d',likely_driver:'kids_yoga_post'},urgency:1,suppression_key:'perf_spike:m_008:calls'},
+{id:'trg_025_dormancy_glamour',scope:'merchant',kind:'dormant_with_vera',source:'internal',merchant_id:'m_004_glamour_salon_pune',customer_id:null,payload:{days_since_last_merchant_message:38,last_topic:'subscription_expiry'},urgency:2,suppression_key:'dormant:m_004:30d'}
+];
+const CUSTOMERS_DATA=[
+{customer_id:'c_001_priya_for_m001',merchant_id:'m_001_drmeera_dentist_delhi',identity:{name:'Priya',language_pref:'hi-en mix',age_band:'25-35'},state:'lapsed_soft',relationship:{visits_total:4,last_visit:'2026-05-12',lifetime_value:1696}},
+{customer_id:'c_002_rohit_for_m001',merchant_id:'m_001_drmeera_dentist_delhi',identity:{name:'Rohit',language_pref:'english',age_band:'35-45'},state:'active',relationship:{visits_total:2,last_visit:'2026-04-18',lifetime_value:5500}},
+{customer_id:'c_003_aanya_for_m001',merchant_id:'m_001_drmeera_dentist_delhi',identity:{name:'Aanya',language_pref:'hi-en mix',age_band:'child_under_12'},state:'lapsed_hard',relationship:{visits_total:1,last_visit:'2026-01-08',lifetime_value:199}},
+{customer_id:'c_004_sneha_for_m003',merchant_id:'m_003_studio11_salon_hyderabad',identity:{name:'Sneha',language_pref:'te-en mix',age_band:'25-35'},state:'active',relationship:{visits_total:11,last_visit:'2026-04-19',lifetime_value:18450}},
+{customer_id:'c_005_kavya_for_m003',merchant_id:'m_003_studio11_salon_hyderabad',identity:{name:'Kavya',language_pref:'english',age_band:'20-25'},state:'new',relationship:{visits_total:1,last_visit:'2026-03-22',lifetime_value:999}},
+{customer_id:'c_006_amit_for_m005',merchant_id:'m_005_pizzajunction_restaurant_delhi',identity:{name:'Amit',language_pref:'hi-en mix',age_band:'25-35'},state:'active',relationship:{visits_total:5,last_visit:'2026-04-22',lifetime_value:2380}},
+{customer_id:'c_007_naveen_for_m006',merchant_id:'m_006_southindiancafe_restaurant_bangalore',identity:{name:'Naveen',language_pref:'kn-en mix',age_band:'30-40'},state:'active',relationship:{visits_total:38,last_visit:'2026-04-25',lifetime_value:6480}},
+{customer_id:'c_008_dipti_for_m006',merchant_id:'m_006_southindiancafe_restaurant_bangalore',identity:{name:'Dipti',language_pref:'english',age_band:'30-40'},state:'lapsed_soft',relationship:{visits_total:2,last_visit:'2026-01-05',lifetime_value:1280}},
+{customer_id:'c_009_arjun_for_m007',merchant_id:'m_007_powerhouse_gym_bangalore',identity:{name:'Arjun',language_pref:'english',age_band:'25-35'},state:'active',relationship:{visits_total:78,last_visit:'2026-04-21',lifetime_value:9990}},
+{customer_id:'c_010_rashmi_for_m007',merchant_id:'m_007_powerhouse_gym_bangalore',identity:{name:'Rashmi',language_pref:'english',age_band:'30-40'},state:'lapsed_hard',relationship:{visits_total:22,last_visit:'2026-02-28',lifetime_value:4490}},
+{customer_id:'c_011_sumitra_for_m008',merchant_id:'m_008_zenyoga_gym_chennai',identity:{name:'Sumitra',language_pref:'ta-en mix',age_band:'45-55'},state:'active',relationship:{visits_total:145,last_visit:'2026-04-26',lifetime_value:28800}},
+{customer_id:'c_012_karthik_jr_for_m008',merchant_id:'m_008_zenyoga_gym_chennai',identity:{name:'Karthik Jr',language_pref:'ta-en mix',age_band:'child_7-12'},state:'new',relationship:{visits_total:1,last_visit:'2026-04-22',lifetime_value:0}},
+{customer_id:'c_013_grandfather_for_m009',merchant_id:'m_009_apollo_pharmacy_jaipur',identity:{name:'Mr. Sharma',language_pref:'hi',age_band:'65-75'},state:'active',relationship:{visits_total:24,last_visit:'2026-04-22',lifetime_value:24600}},
+{customer_id:'c_014_priti_for_m009',merchant_id:'m_009_apollo_pharmacy_jaipur',identity:{name:'Priti',language_pref:'hi-en mix',age_band:'30-40'},state:'active',relationship:{visits_total:3,last_visit:'2026-04-12',lifetime_value:580}},
+{customer_id:'c_015_anon_for_m010',merchant_id:'m_010_sunrisepharm_pharmacy_lucknow',identity:{name:'Walk-in',language_pref:'hi',age_band:'unknown'},state:'new',relationship:{visits_total:1,last_visit:'2026-04-15',lifetime_value:240}}
+];
+const CATEGORIES_DATA={
+dentists:{slug:'dentists',voice:{tone:'peer_clinical',vocab_taboo:['guaranteed','100% safe','miracle'],vocab_allowed:['fluoride varnish','scaling','caries','bruxism','aligner','zirconia']},peer_stats:{avg_ctr:0.030,avg_rating:4.4,avg_review_count:62},offer_catalog:[{id:'den_001',title:'Dental Cleaning @ Rs299'}],digest:[{id:'d_2026W17_jida_fluoride',kind:'research',title:'3-month fluoride varnish recall outperforms 6-month for high-risk adult caries',source:'JIDA Oct 2026, p.14',trial_n:2100,summary:'38% lower caries recurrence with 3-month vs 6-month recall.'},{id:'d_2026W17_dci_radiograph',kind:'compliance',title:'DCI revised radiograph dose limits effective 2026-12-15',source:'Dental Council of India circular 2026-11-04',summary:'Max dose per IOPA drops from 1.5 mSv to 1.0 mSv.'}],seasonal_beats:[],trend_signals:[]},
+salons:{slug:'salons',voice:{tone:'warm_practical',vocab_taboo:['guaranteed glow','miracle'],vocab_allowed:['balayage','keratin','hair spa','manicure','pedicure','facial']},peer_stats:{avg_ctr:0.040,avg_rating:4.5,avg_review_count:88},offer_catalog:[{id:'sal_001',title:'Haircut @ Rs99'}],digest:[{id:'d_2026W17_bridal_season_start',kind:'seasonal',title:'Wedding season opener April-May window',source:'Wedding industry intel',summary:'Mini-bridal window often missed by salons.'}],seasonal_beats:[],trend_signals:[]},
+restaurants:{slug:'restaurants',voice:{tone:'warm_busy_practical',vocab_taboo:['best food in city'],vocab_allowed:['footfall','covers','AOV','thali']},peer_stats:{avg_ctr:0.025,avg_rating:4.2,avg_review_count:142},offer_catalog:[{id:'res_003',title:'Weekday Lunch Thali @ Rs149'}],digest:[{id:'d_2026W17_ipl_window',kind:'seasonal',title:'IPL home-match Saturdays underperformed weeknight matches',source:'magicpin order data Apr 2026',summary:'Saturday IPL matches shift orders to home-watch parties.'}],seasonal_beats:[],trend_signals:[]},
+gyms:{slug:'gyms',voice:{tone:'energetic_disciplined',vocab_taboo:['guaranteed weight loss','miracle'],vocab_allowed:['PT sessions','HIIT','yoga','pilates','churn']},peer_stats:{avg_ctr:0.045,avg_rating:4.5,avg_review_count:56},offer_catalog:[{id:'gym_001',title:'3 FREE Trial Classes'}],digest:[{id:'d_2026W17_pt_demand',kind:'trend',title:'Personal Training inquiries +38% YoY',source:'Multi-gym aggregate Apr 2026',summary:'Driven by health-check-up findings.'}],seasonal_beats:[],trend_signals:[]},
+pharmacies:{slug:'pharmacies',voice:{tone:'trustworthy_precise',vocab_taboo:['miracle cure','guaranteed result'],vocab_allowed:['OTC','generic','molecule','MRP','batch']},peer_stats:{avg_ctr:0.038,avg_rating:4.6,avg_review_count:42},offer_catalog:[{id:'phr_004',title:'Free BP & Sugar Check'}],digest:[{id:'d_2026W17_atorvastatin_recall',kind:'alert',title:'Voluntary recall: Specific atorvastatin batches',source:'CDSCO alert Apr 2026',summary:'Two batches flagged for sub-potency.'}],seasonal_beats:[],trend_signals:[]}
+};
+const QUICK_SCENARIOS=[
+{label:'Research Digest',cat:'dentists',mId:'m_001_drmeera_dentist_delhi',tId:'trg_001_research_digest_dentists',cId:null},
+{label:'Performance Dip',cat:'dentists',mId:'m_002_bharat_dentist_mumbai',tId:'trg_004_perf_dip_bharat',cId:null},
+{label:'Festival Upcoming',cat:'salons',mId:'m_003_studio11_salon_hyderabad',tId:'trg_006_festival_diwali',cId:null},
+{label:'Bridal Followup',cat:'salons',mId:'m_003_studio11_salon_hyderabad',tId:'trg_007_bridal_followup_kavya',cId:'c_005_kavya_for_m003'},
+{label:'IPL Match Day',cat:'restaurants',mId:'m_005_pizzajunction_restaurant_delhi',tId:'trg_010_ipl_match_delhi',cId:null},
+{label:'Planning Intent',cat:'restaurants',mId:'m_006_southindiancafe_restaurant_bangalore',tId:'trg_013_corporate_thali_planning',cId:null},
+{label:'Seasonal Dip',cat:'gyms',mId:'m_007_powerhouse_gym_bangalore',tId:'trg_014_seasonal_dip_powerhouse',cId:null},
+{label:'Lapsed Customer',cat:'gyms',mId:'m_007_powerhouse_gym_bangalore',tId:'trg_015_winback_rashmi',cId:'c_010_rashmi_for_m007'},
+{label:'Supply Alert',cat:'pharmacies',mId:'m_009_apollo_pharmacy_jaipur',tId:'trg_018_supply_atorvastatin',cId:null},
+{label:'Refill Due',cat:'pharmacies',mId:'m_009_apollo_pharmacy_jaipur',tId:'trg_019_chronic_refill_grandfather',cId:'c_013_grandfather_for_m009'}
+];
+const CAT_EMOJI={dentists:'D',salons:'S',restaurants:'R',gyms:'G',pharmacies:'P'};
+const QUICK_REPLIES={
+  yes:'Yes go ahead kar do please',
+  no:'No not interested stop messaging',
+  auto:'Thank you for contacting us! Our team will respond shortly.',
+  question:'How much does this cost? Kya price hai?',
+  hostile:'Stop messaging me. This is spam and I am reporting you.',
+  offtopic:'Can you help me file my GST return? I need ITR help.',
+  hindi_yes:'Haan bilkul kar do. Aage badho.'
+};
+const state={botUrl:'http://localhost:8080',scoreUrl:'http://localhost:8090',botConnected:false,scoreConnected:false,currentConvId:null,currentTriggerId:null,currentMerchantId:null,currentCustomerId:null,currentCategory:null,turnNumber:1,lastAction:null,sessionScores:[],batchResults:[],batchRunning:false,uptimeInterval:null,refreshInterval:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function ts(){return new Date().toLocaleTimeString('en-IN',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function scoreColor(v){if(v>=9)return'var(--success)';if(v>=7)return'var(--warn)';if(v>=5)return'var(--orange)';return'var(--danger)';}
+function gradeLabel(t){if(t>=45)return'Excellent +++';if(t>=40)return'Good ++';if(t>=35)return'Average +';if(t>=25)return'Weak';return'Poor';}
+function gradeColor(t){if(t>=40)return'var(--success)';if(t>=35)return'var(--warn)';return'var(--danger)';}
+function intentBadge(msg){
+  const m=msg.toLowerCase();
+  if(m.includes('spam')||m.includes('reporting'))return{cls:'intent-hostile',label:'hostile'};
+  if(m.includes('thank you for contacting')||m.includes('our team will respond'))return{cls:'intent-auto',label:'auto-reply'};
+  if(m.includes('yes')||m.includes('haan')||m.includes('go ahead')||m.includes('kar do')||m.includes('aage badho'))return{cls:'intent-accept',label:'accept'};
+  if(m.includes('not interested')||m.includes('stop messaging'))return{cls:'intent-reject',label:'reject'};
+  if(m.includes('?')||m.includes('how much')||m.includes('kya price'))return{cls:'intent-question',label:'question'};
+  if(m.includes('gst')||m.includes('itr'))return{cls:'intent-neutral',label:'off-topic'};
+  return{cls:'intent-neutral',label:'neutral'};
+}
+
+// ── LOG ──
+function addLog(method,endpoint,status,latencyMs,reqBody,resBody){
+  const budget={healthz:2000,metadata:2000,context:5000,tick:15000,reply:15000,teardown:5000};
+  const ep=Object.keys(budget).find(k=>endpoint.includes(k))||'tick';
+  const lim=budget[ep]||15000;
+  const cls=status>=400?'err':latencyMs>lim?'err':latencyMs>lim*0.8?'warn':'ok';
+  const warnTag=latencyMs>lim?` <span style="color:var(--warn)">⚠ ${(latencyMs/1000).toFixed(1)}s (budget:${lim/1000}s)</span>`:'';
+  const el=document.createElement('div');
+  el.className=`log-entry ${cls}`;
+  el.innerHTML=`<div class="log-entry-header">
+    <span style="color:var(--muted)">[${ts()}]</span>
+    <span style="color:var(--accent)">${method}</span>
+    <span>${esc(endpoint)}</span>
+    <span style="color:${cls==='ok'?'var(--success)':cls==='warn'?'var(--warn)':'var(--danger)'}">${status}</span>
+    <span style="color:var(--muted)">${latencyMs}ms${warnTag}</span>
+  </div>
+  <div class="log-entry-body"><strong>REQ:</strong> ${esc(JSON.stringify(reqBody,null,2))}\n<strong>RES:</strong> ${esc(JSON.stringify(resBody,null,2))}</div>`;
+  el.querySelector('.log-entry-header').onclick=()=>el.querySelector('.log-entry-body').classList.toggle('open');
+  const ll=$('log-list');
+  ll.insertBefore(el,ll.firstChild);
+  if(latencyMs>10000){setStatus(`⚠ Slow response: ${(latencyMs/1000).toFixed(1)}s (budget: 15s)`,'warn');}
+}
+
+async function apiFetch(method,url,body,endpoint){
+  const t0=Date.now();
+  let status=0,resBody=null;
+  try{
+    const opts={method,headers:{'Content-Type':'application/json'}};
+    if(body)opts.body=JSON.stringify(body);
+    const r=await fetch(url,opts);
+    status=r.status;
+    resBody=await r.json().catch(()=>null);
+    const lat=Date.now()-t0;
+    addLog(method,endpoint||url,status,lat,body,resBody);
+    return{ok:r.ok,status,data:resBody,latency:lat};
+  }catch(e){
+    const lat=Date.now()-t0;
+    addLog(method,endpoint||url,0,lat,body,{error:e.message});
+    return{ok:false,status:0,data:null,latency:lat,error:e.message};
+  }
+}
+
+// ── BANNERS ──
+function showBanner(id,cls,html){const el=$(id);el.innerHTML=`<div class="banner ${cls}">${html}</div>`;el.style.display='block';}
+function hideBanner(id){$(id).style.display='none';}
+function setStatus(msg,type='info'){const el=$('compose-status');el.style.color=type==='warn'?'var(--warn)':type==='err'?'var(--danger)':'var(--muted)';el.textContent=msg;}
+
+// ── CONNECTION ──
+async function connect(){
+  state.botUrl=$('bot-url').value.trim()||'http://localhost:8080';
+  state.scoreUrl=$('score-url').value.trim()||'http://localhost:8090';
+  // Bot
+  const br=await apiFetch('GET',`${state.botUrl}/v1/healthz`,null,'/v1/healthz');
+  if(br.ok&&br.data){
+    state.botConnected=true;
+    $('bot-dot').className='dot green';
+    $('bot-status').textContent='Connected';
+    $('bot-uptime').textContent=`uptime: ${br.data.uptime_seconds}s`;
+    hideBanner('banner-bot');
+    updateCtxCounts(br.data.contexts_loaded||{});
+    startAutoRefresh();
+  } else {
+    state.botConnected=false;
+    $('bot-dot').className='dot red';
+    $('bot-status').textContent='Unreachable';
+    showBanner('banner-bot','red','Bot server offline — start with: <code>uvicorn bot:app --host 0.0.0.0 --port 8080</code>');
+  }
+  // Score server
+  const sr=await apiFetch('GET',`${state.scoreUrl}/healthz`,null,'/healthz');
+  if(sr.ok){
+    state.scoreConnected=true;
+    $('score-dot').className='dot green';
+    $('score-status').textContent='Score server connected';
+    hideBanner('banner-score');
+  } else {
+    state.scoreConnected=false;
+    $('score-dot').className='dot amber';
+    $('score-status').textContent='Score server offline';
+    showBanner('banner-score','amber','Score server offline — scoring disabled. Start with: <code>python score_server.py</code>');
+  }
+  // Nav
+  $('nav-dot').className=`dot ${state.botConnected?'green':'red'}`;
+  $('nav-url').textContent=state.botUrl;
+}
+
+function updateCtxCounts(loaded){
+  if(!loaded)return;
+  $('cnt-cat').textContent=loaded.category||0;
+  $('cnt-mer').textContent=loaded.merchant||0;
+  $('cnt-cust').textContent=loaded.customer||0;
+  $('cnt-trg').textContent=loaded.trigger||0;
+}
+
+function startAutoRefresh(){
+  if(state.refreshInterval)clearInterval(state.refreshInterval);
+  state.refreshInterval=setInterval(async()=>{
+    if(!state.botConnected)return;
+    const r=await apiFetch('GET',`${state.botUrl}/v1/healthz`,null,'/v1/healthz');
+    if(r.ok&&r.data){
+      $('bot-uptime').textContent=`uptime: ${r.data.uptime_seconds}s`;
+      $('nav-uptime').textContent=`${r.data.uptime_seconds}s`;
+      updateCtxCounts(r.data.contexts_loaded||{});
+    }
+  },10000);
+}
+
+// ── DROPDOWNS ──
+function onCategoryChange(){
+  const cat=$('sel-category').value;
+  const mer=$('sel-merchant');
+  mer.innerHTML='<option value="">-- select merchant --</option>';
+  if(!cat)return;
+  MERCHANTS_DATA.filter(m=>m.category_slug===cat).forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.merchant_id;
+    o.textContent=`${m.identity.owner_first_name} — ${m.identity.name}`;
+    mer.appendChild(o);
+  });
+  populateTriggers(cat,null);
+  $('sel-customer').innerHTML='<option value="">None (merchant-facing)</option>';
+}
+
+function onMerchantChange(){
+  const mId=$('sel-merchant').value;
+  const cat=$('sel-category').value;
+  populateTriggers(cat,mId);
+  const cust=$('sel-customer');
+  cust.innerHTML='<option value="">None (merchant-facing)</option>';
+  if(mId){
+    CUSTOMERS_DATA.filter(c=>c.merchant_id===mId).forEach(c=>{
+      const o=document.createElement('option');
+      o.value=c.customer_id;
+      o.textContent=`${c.identity.name} (${c.state})`;
+      cust.appendChild(o);
+    });
+  }
+}
+
+function populateTriggers(cat,mId){
+  const sel=$('sel-trigger');
+  sel.innerHTML='<option value="">-- select trigger --</option>';
+  TRIGGERS_DATA.filter(t=>(!mId||t.merchant_id===mId)||(!mId&&cat&&MERCHANTS_DATA.find(m=>m.merchant_id===t.merchant_id)?.category_slug===cat))
+    .forEach(t=>{
+      const o=document.createElement('option');
+      o.value=t.id;
+      o.textContent=`${t.kind} (${t.scope}) — urgency ${t.urgency}`;
+      sel.appendChild(o);
+    });
+}
+
+// ── PUSH CONTEXT ──
+async function pushOne(scope,id,version,payload){
+  return apiFetch('POST',`${state.botUrl}/v1/context`,{scope,context_id:id,version,payload,delivered_at:new Date().toISOString()},'/v1/context');
+}
+
+async function pushContext(){
+  if(!state.botConnected){setStatus('Not connected — click Connect first','err');return;}
+  const cat=$('sel-category').value;
+  const mId=$('sel-merchant').value;
+  const tId=$('sel-trigger').value;
+  const cId=$('sel-customer').value;
+  if(!cat||!mId||!tId){setStatus('Select category + merchant + trigger first','err');return;}
+  $('push-spinner').style.display='inline-block';
+  let pushed=0,total=2+(cId?1:0)+1;
+  // Category
+  const catData=CATEGORIES_DATA[cat];
+  if(catData){await pushOne('category',cat,1,catData);pushed++;}
+  setPushProgress(pushed,total,'Pushed category...');
+  // Merchant
+  const mer=MERCHANTS_DATA.find(m=>m.merchant_id===mId);
+  if(mer){await pushOne('merchant',mId,1,mer);pushed++;}
+  setPushProgress(pushed,total,'Pushed merchant...');
+  // Customer
+  if(cId){
+    const cust=CUSTOMERS_DATA.find(c=>c.customer_id===cId);
+    if(cust){await pushOne('customer',cId,1,cust);pushed++;}
+    setPushProgress(pushed,total,'Pushed customer...');
+  }
+  // Trigger
+  const trg=TRIGGERS_DATA.find(t=>t.id===tId);
+  if(trg){await pushOne('trigger',tId,1,trg);pushed++;}
+  setPushProgress(pushed,total,`${pushed}/${total} pushed`);
+  state.currentCategory=cat; state.currentMerchantId=mId;
+  state.currentTriggerId=tId; state.currentCustomerId=cId||null;
+  state.currentConvId=`conv_${mId}_${tId}`;
+  $('conv-id-display').textContent=state.currentConvId;
+  const tkb=$('trigger-kind-badge'); tkb.textContent=trg?.kind||''; tkb.style.display='inline';
+  $('push-spinner').style.display='none';
+  addSystemMsg(`Context pushed: ${cat} / ${mer?.identity?.name} / ${trg?.kind}`);
+  setTimeout(()=>{$('push-progress').style.display='none';},3000);
+  // Refresh counts
+  const r=await apiFetch('GET',`${state.botUrl}/v1/healthz`,null,'/v1/healthz');
+  if(r.ok&&r.data)updateCtxCounts(r.data.contexts_loaded||{});
+}
+
+function setPushProgress(n,total,msg){
+  $('push-progress').style.display='block';
+  $('push-progress-text').textContent=msg;
+  $('push-progress-bar').style.width=`${Math.round(n/total*100)}%`;
+}
+
+async function pushAllSeed(){
+  if(!state.botConnected){setStatus('Not connected','err');return;}
+  const items=[];
+  Object.entries(CATEGORIES_DATA).forEach(([k,v])=>items.push({scope:'category',id:k,v:1,payload:v}));
+  MERCHANTS_DATA.forEach(m=>items.push({scope:'merchant',id:m.merchant_id,v:1,payload:m}));
+  CUSTOMERS_DATA.forEach(c=>items.push({scope:'customer',id:c.customer_id,v:1,payload:c}));
+  const total=items.length;
+  $('push-progress').style.display='block';
+  for(let i=0;i<items.length;i++){
+    const it=items[i];
+    await pushOne(it.scope,it.id,it.v,it.payload);
+    setPushProgress(i+1,total,`Pushing... ${i+1}/${total}`);
+  }
+  setPushProgress(total,total,`Done — ${total} items pushed`);
+  addSystemMsg(`Push All: ${total} items pushed (5 categories + ${MERCHANTS_DATA.length} merchants + ${CUSTOMERS_DATA.length} customers)`);
+  const r=await apiFetch('GET',`${state.botUrl}/v1/healthz`,null,'/v1/healthz');
+  if(r.ok&&r.data)updateCtxCounts(r.data.contexts_loaded||{});
+  setTimeout(()=>{$('push-progress').style.display='none';},4000);
+}
+
+// ── QUICK SCENARIOS ──
+function buildScenarioGrid(){
+  const grid=$('scenario-grid');
+  grid.innerHTML='';
+  QUICK_SCENARIOS.forEach(sc=>{
+    const btn=document.createElement('button');
+    btn.className='scenario-btn';
+    btn.innerHTML=`${sc.label}<span class="cat">${sc.cat}</span>`;
+    btn.onclick=()=>runQuickScenario(sc);
+    grid.appendChild(btn);
+  });
+}
+
+async function runQuickScenario(sc){
+  if(!state.botConnected){setStatus('Not connected','err');return;}
+  // Fill dropdowns
+  $('sel-category').value=sc.cat; onCategoryChange();
+  $('sel-merchant').value=sc.mId; onMerchantChange();
+  $('sel-trigger').value=sc.tId;
+  if(sc.cId)$('sel-customer').value=sc.cId;
+  await pushContext();
+  await sleep(400);
+  await composeTick();
+}
+
+// ── COMPOSE / TICK ──
+async function composeTick(){
+  if(!state.botConnected){setStatus('Not connected','err');return;}
+  if(!state.currentTriggerId){setStatus('Push context first — no trigger selected','err');return;}
+  $('compose-spinner').style.display='inline-block';
+  $('btn-compose').disabled=true;
+  setStatus('Calling Groq...');
+  const t0=Date.now();
+  const r=await apiFetch('POST',`${state.botUrl}/v1/tick`,
+    {now:new Date().toISOString(),available_triggers:[state.currentTriggerId]},'/v1/tick');
+  const lat=Date.now()-t0;
+  $('compose-spinner').style.display='none';
+  $('btn-compose').disabled=false;
+  if(!r.ok){setStatus(`Tick failed: ${r.error||r.status}`,'err');return;}
+  const actions=r.data?.actions||[];
+  if(!actions.length){
+    addSystemMsg('Tick returned 0 actions. Check: ① Is context pushed? ② Is trigger suppressed? ③ Is merchant in store? Click Push Context first.');
+    setStatus('0 actions returned','warn');
+    return;
+  }
+  const action=actions[0];
+  state.lastAction=action;
+  state.currentConvId=action.conversation_id||state.currentConvId;
+  $('conv-id-display').textContent=state.currentConvId||'—';
+  const tkb=$('trigger-kind-badge');
+  const trg=TRIGGERS_DATA.find(t=>t.id===state.currentTriggerId);
+  tkb.textContent=trg?.kind||''; tkb.style.display='inline';
+  const sab=$('send-as-badge');
+  sab.textContent=action.send_as||'vera'; sab.style.display='inline';
+  if(!action.body||!action.body.trim()){
+    addSystemMsg(`compose() returned empty body for ${trg?.kind}. Check fallback logic in composer.py.`);
+    setStatus('Empty body returned','err');
+    return;
+  }
+  const warnLat=lat>10000?`⚠ Slow response: ${(lat/1000).toFixed(1)}s (budget: 15s)`:'';
+  addVeraMsg(action,warnLat);
+  $('quick-replies').style.display='flex';
+  setStatus(`Done in ${lat}ms${warnLat?' — '+warnLat:''}`);
+  // Auto-score
+  if(state.scoreConnected){
+    await scoreAction(action,trg?.kind||'');
+  }
+  state.turnNumber++;
+}
+
+// ── REPLY ──
+async function sendReply(){
+  const msg=$('reply-input').value.trim();
+  if(!msg){return;}
+  await doReply(msg);
+  $('reply-input').value='';
+}
+
+async function sendQuickReply(key){
+  await doReply(QUICK_REPLIES[key]);
+}
+
+async function doReply(msg){
+  if(!state.botConnected){setStatus('Not connected','err');return;}
+  if(!state.currentConvId){setStatus('No active conversation','err');return;}
+  const intent=intentBadge(msg);
+  addMerchantMsg(msg,intent);
+  setStatus('Sending reply...');
+  const r=await apiFetch('POST',`${state.botUrl}/v1/reply`,{
+    conversation_id:state.currentConvId,
+    merchant_id:state.currentMerchantId||'',
+    customer_id:state.currentCustomerId||null,
+    from_role:'merchant',
+    message:msg,
+    received_at:new Date().toISOString(),
+    turn_number:state.turnNumber
+  },'/v1/reply');
+  if(!r.ok){setStatus(`Reply failed: ${r.error||r.status}`,'err');return;}
+  const res=r.data;
+  const action=res?.action||res?.actions?.[0]||res;
+  const actionLabel=res?.action||action?.action||'send';
+  const body=res?.body||action?.body||'';
+  addBotReplyMsg(body,actionLabel,res);
+  $('quick-replies').style.display='flex';
+  setStatus(`Reply handled — action: ${actionLabel}`);
+  state.turnNumber++;
+}
+
+// ── SCORE ──
+async function scoreAction(action,kind){
+  if(!state.scoreConnected)return;
+  const cat=CATEGORIES_DATA[state.currentCategory]||{};
+  const mer=MERCHANTS_DATA.find(m=>m.merchant_id===state.currentMerchantId)||{};
+  const trg=TRIGGERS_DATA.find(t=>t.id===state.currentTriggerId)||{};
+  const cust=state.currentCustomerId?CUSTOMERS_DATA.find(c=>c.customer_id===state.currentCustomerId):null;
+  const r=await apiFetch('POST',`${state.scoreUrl}/score`,{
+    body:action.body||'',category:cat,merchant:mer,trigger:trg,
+    customer:cust,cta:action.cta||'',send_as:action.send_as||'vera'
+  },'/score');
+  if(!r.ok){
+    if(r.status===429){
+      $('score-empty').innerHTML='Rate limited — retrying in 10s...';
+      await sleep(10000);
+      return scoreAction(action,kind);
+    }
+    return;
+  }
+  renderScoreCard(r.data,kind);
+  state.sessionScores.push({kind,total:r.data.adjusted_total,data:r.data});
+  if(state.sessionScores.length>=3)renderSessionSummary();
+}
+
+async function scoreThisMessage(msgEl,action){
+  if(!state.scoreConnected){
+    showBanner('banner-score','amber','Score server offline — start with: python score_server.py');
+    return;
+  }
+  const cat=CATEGORIES_DATA[state.currentCategory]||{};
+  const mer=MERCHANTS_DATA.find(m=>m.merchant_id===state.currentMerchantId)||{};
+  const trg=TRIGGERS_DATA.find(t=>t.id===state.currentTriggerId)||{};
+  const cust=state.currentCustomerId?CUSTOMERS_DATA.find(c=>c.customer_id===state.currentCustomerId):null;
+  const btn=msgEl.querySelector('.score-inline-btn');
+  if(btn){btn.textContent='Scoring...';btn.disabled=true;}
+  const r=await apiFetch('POST',`${state.scoreUrl}/score`,{
+    body:action.body||'',category:cat,merchant:mer,trigger:trg,
+    customer:cust,cta:action.cta||'',send_as:action.send_as||'vera'
+  },'/score');
+  if(btn){btn.style.display='none';}
+  if(!r.ok)return;
+  renderInlineScore(msgEl,r.data);
+  renderScoreCard(r.data,trg?.kind||'');
+}
+
+function renderInlineScore(msgEl,s){
+  const dims=[
+    {key:'decision_quality',label:'DecQ'},
+    {key:'specificity',label:'Spec'},
+    {key:'category_fit',label:'CatF'},
+    {key:'merchant_fit',label:'MerF'},
+    {key:'engagement_compulsion',label:'EngC'}
+  ];
+  let html=`<div class="inline-score"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">Score: ${(s.adjusted_total||0).toFixed(1)}/50</div>`;
+  dims.forEach(d=>{
+    const v=s[d.key]||0;
+    html+=`<div class="row"><span class="dim-name">${d.label}</span>
+      <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${v*10}%;background:${scoreColor(v)}"></div></div>
+      <span class="score-val" style="color:${scoreColor(v)}">${v}/10</span></div>`;
+  });
+  html+='</div>';
+  const existing=msgEl.querySelector('.inline-score');
+  if(existing)existing.remove();
+  msgEl.insertAdjacentHTML('beforeend',html);
+}
+
+function renderScoreCard(s,kind){
+  const DIMS=[
+    {key:'decision_quality',name:'Decision Quality',hint:'Combined trigger + merchant state + category before writing?'},
+    {key:'specificity',name:'Specificity',hint:'Real numbers, offers, dates, and local facts used?'},
+    {key:'category_fit',name:'Category Fit',hint:'Tone true to business type: clinical / visual / timely / utility-first?'},
+    {key:'merchant_fit',name:'Merchant Fit',hint:'Personalized to merchant metrics, offer catalog, prior behavior?'},
+    {key:'engagement_compulsion',name:'Engagement Compulsion',hint:'One strong reason to reply now with low-effort next action?'}
+  ];
+  $('score-empty').style.display='none';
+  $('score-card').style.display='block';
+  $('sc-subheader').textContent=`${kind||'—'} · ${state.currentCategory||'—'}`;
+  let dimsHtml='';
+  DIMS.forEach(d=>{
+    const v=s[d.key]||0;
+    const lbl=v>=9?'<span style="color:var(--success)">Excellent</span>':v>=7?'<span style="color:var(--warn)">Good</span>':v>=5?'<span style="color:var(--orange)">Average</span>':'<span style="color:var(--danger)">Weak</span>';
+    dimsHtml+=`<div class="score-dim">
+      <div class="score-dim-header"><span class="score-dim-name">${d.name}</span><span class="score-dim-val" style="color:${scoreColor(v)}">${v}/10 ${lbl}</span></div>
+      <div class="score-dim-bar"><div class="score-dim-fill" style="width:${v*10}%;background:${scoreColor(v)}"></div></div>
+      <div class="score-dim-hint">${d.hint}</div>
+    </div>`;
+  });
+  $('sc-dims').innerHTML=dimsHtml;
+  const tot=s.adjusted_total||s.total||0;
+  $('sc-total').textContent=`${tot.toFixed(1)}/50`;
+  $('sc-total').style.color=gradeColor(tot);
+  $('sc-grade').textContent=gradeLabel(tot);
+  const reasons=s.reasons||{};
+  const hint=s.hint||s.feedback?.fix||'';
+  const best=Object.entries(reasons).sort((a,b)=>(s[b[0]]||0)-(s[a[0]]||0))[0];
+  const worst=Object.entries(reasons).sort((a,b)=>(s[a[0]]||0)-(s[b[0]]||0))[0];
+  $('sc-feedback').innerHTML=`
+    <div class="fb-row"><span class="fb-icon" style="color:var(--success)">&#10003;</span><span>${best?best[1]:'—'}</span></div>
+    <div class="fb-row"><span class="fb-icon" style="color:var(--danger)">&#10007;</span><span>${worst?worst[1]:'—'}</span></div>
+    <div class="fb-row"><span class="fb-icon" style="color:var(--warn)">&#8594;</span><span>${hint||'—'}</span></div>`;
+  switchTab('score');
+}
+
+function renderSessionSummary(){
+  const ss=$('session-summary');
+  ss.style.display='block';
+  const avg=(state.sessionScores.reduce((a,b)=>a+b.total,0)/state.sessionScores.length).toFixed(1);
+  const best=state.sessionScores.reduce((a,b)=>b.total>a.total?b:a);
+  const worst=state.sessionScores.reduce((a,b)=>b.total<a.total?b:a);
+  const dimKeys=['decision_quality','specificity','category_fit','merchant_fit','engagement_compulsion'];
+  const dimAvgs=dimKeys.map(k=>({k,v:state.sessionScores.reduce((a,b)=>a+(b.data[k]||0),0)/state.sessionScores.length}));
+  const weakDim=dimAvgs.sort((a,b)=>a.v-b.v)[0];
+  $('ss-rows').innerHTML=`
+    <div class="row"><span>Avg score (${state.sessionScores.length} msgs)</span><span style="color:${gradeColor(+avg)}">${avg}/50</span></div>
+    <div class="row"><span>Best</span><span style="color:var(--success)">${best.kind} (${best.total.toFixed(1)})</span></div>
+    <div class="row"><span>Worst</span><span style="color:var(--danger)">${worst.kind} (${worst.total.toFixed(1)})</span></div>
+    <div class="row"><span>Weakest dim</span><span style="color:var(--warn)">${weakDim.k.replace(/_/g,' ')} (${weakDim.v.toFixed(1)}/10)</span></div>`;
+}
+
+// ── THREAD HELPERS ──
+function addSystemMsg(txt){
+  hideEmptyState();
+  const el=document.createElement('div');
+  el.className='msg system';
+  el.textContent=txt;
+  $('thread').appendChild(el);
+  scrollThread();
+}
+
+function addVeraMsg(action,warnStr){
+  hideEmptyState();
+  const el=document.createElement('div');
+  el.className='msg vera';
+  const ratId='rat_'+Date.now();
+  el.innerHTML=`<div class="msg-header">
+    <span class="role-tag vera">${action.send_as||'vera'}</span>
+    <span class="badge cta">${action.cta||'open_ended'}</span>
+    ${warnStr?`<span class="badge warn">${warnStr}</span>`:''}
+  </div>
+  <div class="msg-body">${esc(action.body||'')}</div>
+  <div class="msg-meta">
+    <span class="msg-time">${ts()}</span>
+    ${action.suppression_key?`<span class="sup-key">${esc(action.suppression_key)}</span>`:''}
+    ${action.rationale?`<button class="rationale-toggle" onclick="document.getElementById('${ratId}').classList.toggle('open')">rationale</button>`:''}
+    <button class="btn small score-inline-btn" onclick="scoreThisMessage(this.closest('.msg'),${JSON.stringify(action).replace(/</g,'\\u003c')})">&#9878; Score</button>
+  </div>
+  ${action.rationale?`<div class="rationale-body" id="${ratId}">${esc(action.rationale)}</div>`:''}`;
+  $('thread').appendChild(el);
+  scrollThread();
+}
+
+function addMerchantMsg(msg,intent){
+  hideEmptyState();
+  const el=document.createElement('div');
+  el.className='msg merchant';
+  el.innerHTML=`<div class="msg-header">
+    <span class="role-tag merchant">merchant</span>
+    <span class="badge ${intent.cls}">${intent.label}</span>
+  </div>
+  <div class="msg-body">${esc(msg)}</div>
+  <div class="msg-meta"><span class="msg-time">${ts()}</span></div>`;
+  $('thread').appendChild(el);
+  scrollThread();
+}
+
+function addBotReplyMsg(body,actionLabel,res){
+  hideEmptyState();
+  const el=document.createElement('div');
+  el.className='msg vera';
+  const cls=actionLabel==='end'?'action-end':actionLabel==='wait'?'action-wait':'action-send';
+  el.innerHTML=`<div class="msg-header">
+    <span class="role-tag vera">vera reply</span>
+    <span class="badge ${cls}">action: ${actionLabel}</span>
+    <span class="badge cta">${res?.cta||''}</span>
+  </div>
+  <div class="msg-body">${esc(body||JSON.stringify(res))}</div>
+  <div class="msg-meta"><span class="msg-time">${ts()}</span></div>`;
+  $('thread').appendChild(el);
+  scrollThread();
+}
+
+function hideEmptyState(){$('thread-empty').style.display='none';}
+function scrollThread(){const t=$('thread');t.scrollTop=t.scrollHeight;}
+
+// ── UI HELPERS ──
+function switchTab(name){
+  ['score','log'].forEach(n=>{
+    $(`tab-${n}`).classList.toggle('active',n===name);
+    $(`tc-${n}`).classList.toggle('active',n===name);
+  });
+}
+function newConversation(){
+  state.currentConvId=null;state.turnNumber=1;state.lastAction=null;
+  $('conv-id-display').textContent='—';
+  $('trigger-kind-badge').style.display='none';
+  $('send-as-badge').style.display='none';
+  $('thread').innerHTML='<div class="empty-state" id="thread-empty"><div class="main">Push context then click Compose Message</div><div class="sub">Or use a Quick Test Scenario from the left panel</div></div>';
+  $('quick-replies').style.display='none';
+  setStatus('');
+}
+function confirmTeardown(){
+  if(!confirm('Teardown will wipe all contexts. Continue?'))return;
+  doTeardown();
+}
+async function doTeardown(){
+  const r=await apiFetch('POST',`${state.botUrl}/v1/teardown`,{},'/v1/teardown');
+  if(r.ok){
+    addSystemMsg('Teardown complete — all contexts cleared');
+    updateCtxCounts({});
+    setStatus('Teardown done');
+  }
+}
+function confirmClearAll(){confirmTeardown();newConversation();}
+
+// ── BATCH TEST ──
+const BATCH_SCENARIOS=[
+  {kind:'research_digest',cat:'dentists',mId:'m_001_drmeera_dentist_delhi',tId:'trg_001_research_digest_dentists',cId:null},
+  {kind:'regulation_change',cat:'dentists',mId:'m_001_drmeera_dentist_delhi',tId:'trg_002_compliance_dci_radiograph',cId:null},
+  {kind:'recall_due',cat:'dentists',mId:'m_001_drmeera_dentist_delhi',tId:'trg_003_recall_due_priya',cId:'c_001_priya_for_m001'},
+  {kind:'perf_dip',cat:'dentists',mId:'m_002_bharat_dentist_mumbai',tId:'trg_004_perf_dip_bharat',cId:null},
+  {kind:'renewal_due',cat:'dentists',mId:'m_002_bharat_dentist_mumbai',tId:'trg_005_renewal_due_bharat',cId:null},
+  {kind:'festival_upcoming',cat:'salons',mId:'m_003_studio11_salon_hyderabad',tId:'trg_006_festival_diwali',cId:null},
+  {kind:'wedding_package_followup',cat:'salons',mId:'m_003_studio11_salon_hyderabad',tId:'trg_007_bridal_followup_kavya',cId:'c_005_kavya_for_m003'},
+  {kind:'curious_ask_due',cat:'salons',mId:'m_003_studio11_salon_hyderabad',tId:'trg_008_curious_ask_studio11',cId:null},
+  {kind:'winback_eligible',cat:'salons',mId:'m_004_glamour_salon_pune',tId:'trg_009_winback_glamour',cId:null},
+  {kind:'ipl_match_today',cat:'restaurants',mId:'m_005_pizzajunction_restaurant_delhi',tId:'trg_010_ipl_match_delhi',cId:null},
+  {kind:'review_theme_emerged',cat:'restaurants',mId:'m_005_pizzajunction_restaurant_delhi',tId:'trg_011_review_theme_late_delivery',cId:null},
+  {kind:'milestone_reached',cat:'restaurants',mId:'m_006_southindiancafe_restaurant_bangalore',tId:'trg_012_milestone_mylari',cId:null},
+  {kind:'active_planning_intent',cat:'restaurants',mId:'m_006_southindiancafe_restaurant_bangalore',tId:'trg_013_corporate_thali_planning',cId:null},
+  {kind:'seasonal_perf_dip',cat:'gyms',mId:'m_007_powerhouse_gym_bangalore',tId:'trg_014_seasonal_dip_powerhouse',cId:null},
+  {kind:'customer_lapsed_hard',cat:'gyms',mId:'m_007_powerhouse_gym_bangalore',tId:'trg_015_winback_rashmi',cId:'c_010_rashmi_for_m007'},
+  {kind:'trial_followup',cat:'gyms',mId:'m_008_zenyoga_gym_chennai',tId:'trg_017_trial_followup_karthik',cId:'c_012_karthik_jr_for_m008'},
+  {kind:'perf_spike',cat:'gyms',mId:'m_008_zenyoga_gym_chennai',tId:'trg_024_perf_spike_zen',cId:null},
+  {kind:'supply_alert',cat:'pharmacies',mId:'m_009_apollo_pharmacy_jaipur',tId:'trg_018_supply_atorvastatin',cId:null},
+  {kind:'chronic_refill_due',cat:'pharmacies',mId:'m_009_apollo_pharmacy_jaipur',tId:'trg_019_chronic_refill_grandfather',cId:'c_013_grandfather_for_m009'},
+  {kind:'category_seasonal',cat:'pharmacies',mId:'m_009_apollo_pharmacy_jaipur',tId:'trg_020_summer_demand_shift',cId:null},
+  {kind:'gbp_unverified',cat:'pharmacies',mId:'m_010_sunrisepharm_pharmacy_lucknow',tId:'trg_021_unverified_gbp_sunrise',cId:null},
+  {kind:'cde_opportunity',cat:'dentists',mId:'m_001_drmeera_dentist_delhi',tId:'trg_022_cde_webinar_dentists',cId:null},
+  {kind:'competitor_opened',cat:'dentists',mId:'m_001_drmeera_dentist_delhi',tId:'trg_023_competitor_opened_dentist',cId:null},
+  {kind:'dormant_with_vera',cat:'salons',mId:'m_004_glamour_salon_pune',tId:'trg_025_dormancy_glamour',cId:null}
+];
+
+function openBatchModal(){$('modal-overlay').classList.add('open');}
+function closeModal(){$('modal-overlay').classList.remove('open');}
+
+async function runBatch(){
+  if(state.batchRunning)return;
+  if(!state.botConnected){alert('Connect to bot server first');return;}
+  state.batchRunning=true;
+  $('btn-batch-run').disabled=true;
+  $('btn-batch-export').style.display='none';
+  $('batch-tbody').innerHTML='';
+  $('batch-summary').style.display='none';
+  state.batchResults=[];
+  const total=BATCH_SCENARIOS.length;
+  for(let i=0;i<total;i++){
+    const sc=BATCH_SCENARIOS[i];
+    $('batch-progress-label').textContent=`Testing ${sc.kind}...`;
+    $('batch-progress-pct').textContent=`${i+1} / ${total}`;
+    $('batch-progress-bar').style.width=`${Math.round((i+1)/total*100)}%`;
+    $('batch-status').textContent=`[${i+1}/${total}] ${sc.kind}`;
+    // Push context
+    const catData=CATEGORIES_DATA[sc.cat];
+    if(catData)await pushOne('category',sc.cat,1,catData);
+    const mer=MERCHANTS_DATA.find(m=>m.merchant_id===sc.mId);
+    if(mer)await pushOne('merchant',sc.mId,1,mer);
+    if(sc.cId){const c=CUSTOMERS_DATA.find(x=>x.customer_id===sc.cId);if(c)await pushOne('customer',sc.cId,1,c);}
+    const trg=TRIGGERS_DATA.find(t=>t.id===sc.tId);
+    if(trg)await pushOne('trigger',sc.tId,1,trg);
+    // Tick
+    const tr=await apiFetch('POST',`${state.botUrl}/v1/tick`,{now:new Date().toISOString(),available_triggers:[sc.tId]},'/v1/tick');
+    const action=tr.data?.actions?.[0];
+    let scores={decision_quality:0,specificity:0,category_fit:0,merchant_fit:0,engagement_compulsion:0,adjusted_total:0};
+    if(action?.body&&state.scoreConnected){
+      const sr=await apiFetch('POST',`${state.scoreUrl}/score`,{
+        body:action.body,category:catData||{},merchant:mer||{},trigger:trg||{},
+        customer:sc.cId?CUSTOMERS_DATA.find(c=>c.customer_id===sc.cId):null,
+        cta:action.cta||'',send_as:action.send_as||'vera'
+      },'/score');
+      if(sr.ok&&sr.data)scores=sr.data;
+    }
+    const row={kind:sc.kind,cat:sc.cat,body:action?.body||'',scores};
+    state.batchResults.push(row);
+    addBatchRow(row,i);
+    if(i<total-1)await sleep(3000);
+  }
+  // Summary
+  const allScores=state.batchResults.map(r=>r.scores.adjusted_total||0);
+  const overallAvg=(allScores.reduce((a,b)=>a+b,0)/allScores.length).toFixed(1);
+  const catGroups={};
+  state.batchResults.forEach(r=>{if(!catGroups[r.cat])catGroups[r.cat]=[];catGroups[r.cat].push(r.scores.adjusted_total||0);});
+  const catAvgs=Object.entries(catGroups).map(([k,v])=>({k,avg:v.reduce((a,b)=>a+b,0)/v.length}));
+  const bestCat=catAvgs.sort((a,b)=>b.avg-a.avg)[0];
+  const worstCat=catAvgs.sort((a,b)=>a.avg-b.avg)[0];
+  const dimKeys=['decision_quality','specificity','category_fit','merchant_fit','engagement_compulsion'];
+  const dimAvgs=dimKeys.map(k=>({k,v:state.batchResults.reduce((a,b)=>a+(b.scores[k]||0),0)/state.batchResults.length}));
+  const weakDim=dimAvgs.sort((a,b)=>a.v-b.v)[0];
+  $('batch-summary').style.display='block';
+  $('batch-summary').innerHTML=`
+    <b>Overall avg:</b> ${overallAvg}/50 &nbsp;|&nbsp;
+    <b>Best category:</b> ${bestCat?.k} (${bestCat?.avg.toFixed(1)}) &nbsp;|&nbsp;
+    <b>Worst category:</b> ${worstCat?.k} (${worstCat?.avg.toFixed(1)})<br>
+    <b>Weakest dimension:</b> ${weakDim?.k?.replace(/_/g,' ')} (avg ${weakDim?.v.toFixed(1)}/10)<br>
+    <span style="color:var(--warn)">Fix: Verify ${weakDim?.k} data is fully surfaced in build_user_prompt(). Check for None key paths.</span>`;
+  $('btn-batch-export').style.display='inline-flex';
+  $('btn-batch-run').disabled=false;
+  state.batchRunning=false;
+  $('batch-progress-label').textContent='Complete';
+  $('batch-status').textContent='Done';
+}
+
+function addBatchRow(row,idx){
+  const s=row.scores;
+  const tot=s.adjusted_total||0;
+  function cell(v){const c=v>=9?'#22c55e':v>=7?'#f59e0b':v>=5?'#f97316':'#ef4444';return`<td><span class="cell-score" style="background:${c}22;color:${c}">${v||0}</span></td>`;}
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td style="font-size:10px">${row.kind}</td><td style="color:var(--muted)">${row.cat}</td>
+    ${cell(s.decision_quality)}${cell(s.specificity)}${cell(s.category_fit)}${cell(s.merchant_fit)}${cell(s.engagement_compulsion)}
+    <td><b style="color:${gradeColor(tot)}">${tot.toFixed?tot.toFixed(1):tot}</b></td>`;
+  // Insert sorted ascending by total
+  const tbody=$('batch-tbody');
+  let inserted=false;
+  for(const existingRow of tbody.rows){
+    const existingTot=parseFloat(existingRow.cells[7]?.textContent||'100');
+    if(tot<existingTot){tbody.insertBefore(tr,existingRow);inserted=true;break;}
+  }
+  if(!inserted)tbody.appendChild(tr);
+}
+
+function exportBatch(){
+  const data={timestamp:new Date().toISOString(),results:state.batchResults};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`batch_results_${Date.now()}.json`;
+  a.click();
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ── INIT ──
+function init(){
+  buildScenarioGrid();
+  // Try auto-connect on load
+  connect().catch(()=>{});
+  // Show bot-offline banner by default until connected
+  showBanner('banner-bot','red','Bot server offline — start with: <code>uvicorn bot:app --host 0.0.0.0 --port 8080</code>');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

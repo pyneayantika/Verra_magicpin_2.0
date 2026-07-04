@@ -1,0 +1,479 @@
+{
+  "summary": {
+    "total_messages": 21,
+    "overall_avg_50": 42.57,
+    "overall_pct": 85.1,
+    "grade": "GOOD ** -- Ready to deploy",
+    "weakest_dimension": "engagement_compulsion",
+    "weakest_dimension_avg": 7.5,
+    "category_averages": {
+      "dentists": {
+        "decision_quality": 9.0,
+        "specificity": 9.0,
+        "category_fit": 9.0,
+        "merchant_fit": 8.4,
+        "engagement_compulsion": 8.2,
+        "total": 43.6,
+        "n": 5
+      },
+      "salons": {
+        "decision_quality": 9.0,
+        "specificity": 9.0,
+        "category_fit": 9.0,
+        "merchant_fit": 8.2,
+        "engagement_compulsion": 7.2,
+        "total": 42.5,
+        "n": 4
+      },
+      "restaurants": {
+        "decision_quality": 9.0,
+        "specificity": 9.0,
+        "category_fit": 8.5,
+        "merchant_fit": 8.5,
+        "engagement_compulsion": 7.0,
+        "total": 41.5,
+        "n": 4
+      },
+      "gyms": {
+        "decision_quality": 9.0,
+        "specificity": 9.0,
+        "category_fit": 8.5,
+        "merchant_fit": 8.2,
+        "engagement_compulsion": 7.8,
+        "total": 42.5,
+        "n": 4
+      },
+      "pharmacies": {
+        "decision_quality": 8.8,
+        "specificity": 9.0,
+        "category_fit": 9.0,
+        "merchant_fit": 8.2,
+        "engagement_compulsion": 7.0,
+        "total": 42.0,
+        "n": 4
+      }
+    }
+  },
+  "messages": [
+    {
+      "category": "dentists",
+      "kind": "research_digest",
+      "body": "Dr. Meera, the JIDA Oct 2026 trial with 2100 participants found that 3-month fluoride varnish recall outperforms 6-month recall for high-risk adult caries, which is particularly relevant for your 124 high-risk adult patients in Lajpat Nagar, Delhi. Given your Dental Cleaning @ Rs299 offer and 2410 views in the last 30 days, I can help you draft a patient-ed WhatsApp message to improve retention, especially considering your 78 lapsed customers. I've already pulled the abstract and can draft the message — just say GO (JIDA Oct 2026, p.14)",
+      "body_len": 542,
+      "num_count": 11,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 9.0,
+      "total": 45.0,
+      "penalties": 0.0,
+      "adjusted_total": 45.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and relevant message for Dr. Meera.",
+        "weakest": "The message is nearly perfect, but the call-to-action could be slightly more prominent or direct.",
+        "fix": "Consider rephrasing the last sentence to make the call-to-action more explicit, such as 'Reply GO to draft a patient-ed WhatsApp message and improve retention'."
+      }
+    },
+    {
+      "category": "dentists",
+      "kind": "recall_due",
+      "body": "Priya ji, aapki last visit humari clinic Dr. Meera's Dental Clinic, Lajpat Nagar, Delhi mein 6 months phele thi (2026-01-15). Humne dekha ki humare 124 high-risk adults mein se aap bhi ek hain, aur humari research digest ke anusar, 3-month fluoride varnish recall se aapke caries recurrence mein 38% ki kami ho sakti hai (JIDA Oct 2026, p.14). Humne aapke liye do slots book kiye hain: Wed 6 Nov 6pm ya Thu 7 Nov 5pm, jismein aapko Dental Cleaning @ Rs299 mil sakta hai. Humare paas 2410 views aur 18 calls aaye hain, lekin hum chahte hain ki aap bhi humari services ka labh uthayein.",
+      "body_len": 584,
+      "num_count": 16,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 8.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and informative recall message for the customer.",
+        "weakest": "The message could be improved by making the call-to-action more prominent and urgent, such as by adding a sense of scarcity or limited-time offer.",
+        "fix": "Adding a statement like 'Please respond within the next 24 hours to secure your preferred slot' could enhance the engagement compulsion and encourage a prompt response from the customer."
+      }
+    },
+    {
+      "category": "dentists",
+      "kind": "perf_dip",
+      "body": "Meera, calls dropped 40% in the last 7 days, with a current CTR of 2.1% vs the peer average of 3.0%. In Lajpat Nagar, Delhi, this dip is concerning, especially with 124 high-risk adults and 78 lapsed customers. Dental Cleaning @ Rs299 could be a key offer to re-engage them. Here is what 3 similar clinics did: they focused on regular recalls, like the 3-month fluoride varnish recall, which outperforms 6-month recalls for high-risk adult caries. With 2410 views in the last 30 days, re-engaging your audience is crucial. (JIDA Oct 2026, p.14)",
+      "body_len": 544,
+      "num_count": 16,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 7.0,
+      "total": 42.0,
+      "penalties": 0.0,
+      "adjusted_total": 42.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized and relevant suggestion for the dentist.",
+        "weakest": "The message lacks a clear and direct call-to-action that compels the merchant to reply immediately.",
+        "fix": "Adding a clear and direct call-to-action, such as 'Reply now to discuss how to re-engage your audience with our Dental Cleaning offer', would improve the engagement compulsion of the message."
+      }
+    },
+    {
+      "category": "dentists",
+      "kind": "regulation_change",
+      "body": "Meera, the Dental Council of India has updated its guidelines on radiographs, affecting your clinic in Lajpat Nagar, Delhi, with a deadline of 15 December 2026. This change impacts your high-risk adult patients, of which you have 124. Given your Dental Cleaning offer at Rs299 and X-Ray at Rs150, I can help draft a compliance checklist to ensure you're meeting the new requirements. With 2410 views in the last 30 days and 18 calls, it's crucial to stay on top of regulatory changes. I've already prepared a template - Reply YES to receive it. (JIDA Oct 2026, p.14)",
+      "body_len": 566,
+      "num_count": 10,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 9.0,
+      "total": 45.0,
+      "penalties": 0.0,
+      "adjusted_total": 45.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and relevant message.",
+        "weakest": "The message is nearly perfect, but could potentially be improved by adding more specific details about the compliance checklist.",
+        "fix": "Adding a brief description of the compliance checklist and its benefits could further enhance the message's engagement compulsion."
+      }
+    },
+    {
+      "category": "dentists",
+      "kind": "competitor_opened",
+      "body": "Meera, thought you'd want to know that SmileCare Dental, 1. (Lajpat Nagar, Delhi)3 km away, has opened and is offering a Free Consultation. Their move might impact your CTR, which is currently 2.1% vs the peer average of 3.0%. You've had 2410 views and 18 calls in the last 30 days, with 540 active customers and 78 lapsed ones. Your Dental Cleaning @ Rs299 and X-Ray @ Rs150 offers are still available. Considering your high-risk adult cohort of 124, a differentiated approach might be beneficial. Want me to suggest a differentiation angle? (JIDA Oct 2026, p.14)",
+      "body_len": 564,
+      "num_count": 16,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 8.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized and informative message.",
+        "weakest": "The message could be improved by providing a more direct and actionable next step for the merchant to take.",
+        "fix": "Adding a clear and specific call-to-action, such as 'Would you like me to help you create a targeted promotion to counter the competitor's offer?' could raise the engagement compulsion score."
+      }
+    },
+    {
+      "category": "salons",
+      "kind": "festival_upcoming",
+      "body": "Anita, Navratri is just 14 days away and bookings peak 5 days before. (Karol Bagh, Mumbai) With 1820 views in the last 30 days and a 0.28% increase in views over the past 7 days, it's clear that customers are already looking for festival services. Our Bridal Glow Package @ Rs2,499 and Festive Hair Spa @ Rs799 are great options for them. Considering the recent launch of Olaplex No.9 in India, a bond protector for chemically-treated hair, we could also think about incorporating this into our services. We've had 24 calls in the last 30 days, but 44 customers have lapsed - let's make sure to reach out to them before the festival. (Hair Brand News India, Apr 2026)",
+      "body_len": 667,
+      "num_count": 15,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 6.0,
+      "total": 41.0,
+      "penalties": 0.0,
+      "adjusted_total": 41.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and relevant message for the salon owner.",
+        "weakest": "The message lacks a clear call-to-action and compulsion lever to encourage the owner to reply immediately.",
+        "fix": "Adding a clear and direct call-to-action, such as 'Reply now to discuss how to incorporate Olaplex No.9 into your services', would improve the engagement compulsion of the message."
+      }
+    },
+    {
+      "category": "salons",
+      "kind": "wedding_package_followup",
+      "body": "Kavya, with your wedding just 21 days away, we're excited to start your skin-prep window now that your trial is complete! At Studio 11 Salon in Karol Bagh, Mumbai, we've seen 1820 views and 24 calls in the last 30 days, and we're eager to help you glow on your big day. Our Bridal Glow Package @ Rs2,499 is perfect for this moment. Shall we schedule your next session for this weekend? (Hair Brand News India, Apr 2026)",
+      "body_len": 419,
+      "num_count": 8,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 8.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and relevant offer for the customer.",
+        "weakest": "The message could be improved by including more specific details about the Bridal Glow Package and its benefits to make it more compelling.",
+        "fix": "Adding a brief description of the package's features and how it will help the customer achieve her desired look for the wedding would raise the engagement compulsion score."
+      }
+    },
+    {
+      "category": "salons",
+      "kind": "curious_ask_due",
+      "body": "Anita, with 1820 views in the last 30 days and a 3.3% CTR, I'm curious to know what's driving the most requests at Studio 11 Salon in Karol Bagh, Mumbai. Your Bridal Glow Package at Rs2,499 seems popular, especially with the festival season active. Considering you have 44 lapsed customers, what do you think would bring them back? Perhaps a promotion featuring the new Olaplex No.9 bond protector? (Hair Brand News India, Apr 2026)",
+      "body_len": 432,
+      "num_count": 10,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 8.0,
+      "total": 44.0,
+      "penalties": 0.0,
+      "adjusted_total": 44.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to ask a relevant question.",
+        "weakest": "The call-to-action, while present, could be more direct and prominent to increase engagement compulsion.",
+        "fix": "Rephrase the last sentence to include a clear, binary call-to-action, such as 'Would you like to discuss a promotion for the Olaplex No.9 bond protector?'"
+      }
+    },
+    {
+      "category": "salons",
+      "kind": "winback_eligible",
+      "body": "Anita, it's been 45 days since your subscription expired, and we've noticed a 28% performance dip since then. In that time, 44 lapsed customers have been added, which could have been engaged with our Bridal Glow Package @ Rs2,499 or Festive Hair Spa @ Rs799. With 1820 views in the last 30 days and a CTR of 3.3%, there's still potential to reach your audience in Karol Bagh, Mumbai. Considering the festival season is active, it's a good time to trial reactivation and explore new products like Olaplex No.9, a bond protector for chemically-treated hair, now available in India (Hair Brand News India, Apr 2026)",
+      "body_len": 612,
+      "num_count": 12,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 7.0,
+      "total": 42.0,
+      "penalties": 0.0,
+      "adjusted_total": 42.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to create a personalized and relevant message for the salon owner.",
+        "weakest": "The message could be improved by including a clearer call-to-action and a sense of urgency to prompt the owner to take immediate action.",
+        "fix": "Adding a sentence such as 'Reply now to discuss a reactivation plan and take advantage of the festival season' would increase the engagement compulsion and overall effectiveness of the message."
+      }
+    },
+    {
+      "category": "restaurants",
+      "kind": "ipl_match_today",
+      "body": "Rahul, with the MI vs CSK match today at 19:30, our data shows that Saturday IPL matches in metros like Delhi result in a 12% drop in restaurant covers as people prefer to watch at home. (Lunch Thali @ Rs149) Considering your high delivery mix and 3140 views in the last 30 days, I recommend pushing your existing Family Combo @ Rs599 offer for delivery instead of a match-night promo in Sector 14 Gurgaon. You have 890 active customers and 134 lapsed customers to target, and with a CTR of 2.9%, this could be an opportunity to drive sales. (magicpin order data, Apr 2026)",
+      "body_len": 573,
+      "num_count": 13,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 8.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 7.0,
+      "total": 41.0,
+      "penalties": 0.0,
+      "adjusted_total": 41.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized recommendation.",
+        "weakest": "The message could be improved by adding a clearer call-to-action and a sense of urgency to drive sales.",
+        "fix": "Adding a sentence like 'Reply NOW to push your Family Combo offer and capitalize on the IPL match' could raise the engagement compulsion score."
+      }
+    },
+    {
+      "category": "restaurants",
+      "kind": "active_planning_intent",
+      "body": "Rahul, I've drafted a corporate lunch package for Pizza Junction in Sector 14 Gurgaon, Delhi, considering your intent to create a package for corporate lunch. With 3140 views and 41 calls in the last 30 days, and a CTR of 2.9%, we can leverage the Lunch Thali @ Rs149 to attract more corporate clients. Given the 134 lapsed customers, targeting them with this package could improve retention. Notably, Saturday IPL matches tend to underperform weeknight matches, with a 12% decrease in covers, as per magicpin order data, Apr 2026. I've included the Family Combo @ Rs599 as an upsell option. Reply CONFIRM to send or CANCEL to revise.",
+      "body_len": 634,
+      "num_count": 11,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 8.0,
+      "total": 44.0,
+      "penalties": -2.0,
+      "adjusted_total": 42.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and relevant corporate lunch package for Pizza Junction.",
+        "weakest": "The message has multiple CTAs, which may confuse the recipient and reduce the effectiveness of the engagement compulsion.",
+        "fix": "Replace the multiple CTAs with a single, clear CTA, such as 'Reply CONFIRM to send the corporate lunch package to your clients'."
+      }
+    },
+    {
+      "category": "restaurants",
+      "kind": "review_theme_emerged",
+      "body": "Rahul, in the last 30 days, 'slow_delivery' has been mentioned 18 times, with one customer saying 'delivery took 45 mins'. This theme is rising, and with 890 active customers and 134 lapsed customers in Sector 14 Gurgaon, Delhi, it's crucial to address. Considering your Lunch Thali @ Rs149 and Family Combo @ Rs599 offers, I can help draft a response template to improve customer satisfaction. Given your 2.9% CTR and 41 calls in the last 30 days, optimizing delivery times can further boost engagement. Notably, magicpin order data shows that IPL home-match Saturdays underperform weeknight matches, with restaurant covers down 12% (magicpin order data, Apr 2026)",
+      "body_len": 665,
+      "num_count": 14,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 8.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 6.0,
+      "total": 40.0,
+      "penalties": 0.0,
+      "adjusted_total": 40.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to address a specific issue.",
+        "weakest": "The message lacks a clear and direct call-to-action to compel the merchant to reply immediately.",
+        "fix": "Adding a clear and direct call-to-action, such as 'Reply now to discuss optimizing delivery times', would improve engagement compulsion."
+      }
+    },
+    {
+      "category": "restaurants",
+      "kind": "milestone_reached",
+      "body": "Rahul, you've reached 98 reviews, just 2 away from the next milestone of 100. Considering your high call volume with 41 calls in the last 30 days and a CTR of 2.9%, promoting your Lunch Thali @ Rs149 and Family Combo @ Rs599 in Sector 14 Gurgaon, Delhi, could help drive more sales. Notably, Saturdays during IPL home matches underperform weeknight matches, with orders down 12% due to home-watch parties, as seen in magicpin order data, Apr 2026. You're close to the next milestone, and adjusting your promo days could help (magicpin order data, Apr 2026)",
+      "body_len": 556,
+      "num_count": 13,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 7.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized recommendation.",
+        "weakest": "The message could be improved by adding a clearer call-to-action to drive immediate engagement.",
+        "fix": "Adding a direct question or a specific ask, such as 'Would you like to adjust your promo days to capitalize on weeknight matches?', could enhance engagement compulsion."
+      }
+    },
+    {
+      "category": "gyms",
+      "kind": "seasonal_perf_dip",
+      "body": "Priya, aapki Koramangala, Bangalore ki listing pe 2890 views aaye is mahine. CTR 2.5% vs peer avg 4.5% (44% below). 92 customers lapsed hain. Aapka '30-Day Trial @ Rs999' promote karna chahiye? Reply YES.",
+      "body_len": 204,
+      "num_count": 9,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 8.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 9.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to decide what to write.",
+        "weakest": "The message could better match the expected tone for a gym, which is coach energy, retention-focused, and data-backed.",
+        "fix": "To improve, the message could be rephrased to have a more energetic and disciplined tone, focusing on retention and data-backed insights."
+      }
+    },
+    {
+      "category": "gyms",
+      "kind": "customer_lapsed_hard",
+      "body": "Priya, it's been 62 days since your last visit to FitZone Gym in Koramangala, Bangalore. We noticed you previously focused on evening yoga sessions and were with us for 8 months. No judgment, no auto-charge. We're offering a 30-Day Trial @ Rs999, which might help you get back into your yoga routine. We've had 2890 views and 33 calls in the last 30 days, but our CTR is 2.5% vs the peer average of 4.5%. Considering the current seasonal dip and high lapse rate, we want to support you in getting back on track. (magicpin gym data, Apr 2026)",
+      "body_len": 541,
+      "num_count": 12,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 8.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines the customer's previous focus and membership history with the current offers and seasonal context.",
+        "weakest": "The message could be more personalized to the specific customer, Raj Kumar, rather than addressing the owner, Priya.",
+        "fix": "Change the greeting to address the customer by name, Raj Kumar, to increase the personalization and merchant fit of the message."
+      }
+    },
+    {
+      "category": "gyms",
+      "kind": "perf_spike",
+      "body": "Priya, your FitZone Gym in Koramangala, Bangalore, saw a 34% spike in views over the last 7 days, with 2890 views in the past 30 days. This surge is likely driven by the new year resolution season. With 445 active customers and 92 lapsed customers, now is the time to capitalize on this momentum. Consider promoting your 30-Day Trial @ Rs999 to attract more trial walk-ins. Historically, gym trial walk-ins spike Jan 1-15, taper through Mar; April-June hits the lowest acquisition window of the year. (magicpin gym data, Apr 2026)",
+      "body_len": 530,
+      "num_count": 11,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 7.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized and data-driven recommendation.",
+        "weakest": "The message could be improved by adding a stronger compulsion lever and a more prominent call-to-action to encourage the merchant to reply now.",
+        "fix": "Consider adding a sense of urgency, such as a limited-time offer or a reminder of an upcoming deadline, to increase the engagement compulsion and encourage the merchant to respond promptly."
+      }
+    },
+    {
+      "category": "gyms",
+      "kind": "trial_followup",
+      "body": "Priya, your FitZone Gym in Koramangala, Bangalore had 2890 views in the last 30 days, with 33 calls. Notably, 92 customers have lapsed. Considering Neha Joshi completed her trial on 2026-06-28, we'd like to offer her a spot in our next sessions: Mon 7 Jul 7am or Wed 9 Jul 6pm, with our 30-Day Trial @ Rs999 still available. Your spot is reserved if you want it. (magicpin gym data, Apr 2026)",
+      "body_len": 392,
+      "num_count": 14,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 8.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 7.0,
+      "total": 41.0,
+      "penalties": 0.0,
+      "adjusted_total": 41.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to create a personalized offer for the customer.",
+        "weakest": "The message could be improved by using a more energetic and disciplined tone, as suggested by the category voice.",
+        "fix": "Adding more specific details about the benefits of the 30-Day Trial or the next sessions could enhance the engagement compulsion."
+      }
+    },
+    {
+      "category": "pharmacies",
+      "kind": "supply_alert",
+      "body": "Suresh, aapki Aundh, Pune ki listing pe 1240 views aaye is mahine. CTR 4.1% vs peer avg 3.8% (-8% below). 56 customers lapsed hain. Aapka 'Monthly BP Monitoring @ Rs199' promote karna chahiye? Reply YES.",
+      "body_len": 203,
+      "num_count": 8,
+      "decision_quality": 8.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 8.0,
+      "engagement_compulsion": 9.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized recommendation.",
+        "weakest": "The message could be improved by incorporating more specific details about the trigger payload, such as the molecule or affected batches.",
+        "fix": "Adding a sentence that explicitly mentions the trigger payload, such as 'In light of the recent CDSCO alert on Metformin 500mg, promoting your Monthly BP Monitoring offer could help retain customers.'"
+      }
+    },
+    {
+      "category": "pharmacies",
+      "kind": "chronic_refill_due",
+      "body": "Namaste Shyam, your chronic medication refill is due, including Metformin 500mg and Amlodipine 5mg, with stock running out on 2026-07-10. As a valued customer in Aundh, Pune, you can avail our Senior Citizen 10% Discount. We've had 1240 views and 29 calls in the last 30 days, with 680 active customers, and we're committed to serving you. Our Monthly BP Monitoring is available at Rs199. We'll deliver to the same address as last time. Considering the recent DGCI release Apr 2026, regarding the generic metformin SR price drop, (DGCI release Apr 2026)",
+      "body_len": 553,
+      "num_count": 13,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 7.0,
+      "engagement_compulsion": 6.0,
+      "total": 40.0,
+      "penalties": 0.0,
+      "adjusted_total": 40.0,
+      "feedback": {
+        "strongest": "The message effectively combines the trigger, merchant state, and category fit to create a personalized and informative message for the customer.",
+        "weakest": "The message lacks a clear and direct call-to-action to compel the customer to reply or take action immediately.",
+        "fix": "Adding a clear and direct call-to-action, such as 'Reply NOW to confirm your refill order', would improve the engagement compulsion of the message."
+      }
+    },
+    {
+      "category": "pharmacies",
+      "kind": "category_seasonal",
+      "body": "Suresh, as monsoon sets in, our pharmacy in Aundh, Pune, is seeing a rise in demand for ORS and antifungal medications. With 1240 views and 29 calls in the last 30 days, it's crucial we capitalize on this trend. Our Monthly BP Monitoring @ Rs199 offer has been well-received, but we must also cater to the 210 high-risk adults and 56 lapsed customers. I recommend moving ORS and antifungal to the front shelf display. I can draft a customer awareness post highlighting these essentials and our Senior Citizen 10% Discount. (DGCI release Apr 2026)",
+      "body_len": 546,
+      "num_count": 8,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 6.0,
+      "total": 42.0,
+      "penalties": 0.0,
+      "adjusted_total": 42.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized recommendation.",
+        "weakest": "The message lacks a clear and direct call-to-action to compel the merchant to reply immediately.",
+        "fix": "Adding a clear and direct call-to-action, such as 'Reply now to move ORS and antifungal to the front shelf display', would improve the engagement compulsion."
+      }
+    },
+    {
+      "category": "pharmacies",
+      "kind": "gbp_unverified",
+      "body": "Suresh, your Wellness Pharmacy in Aundh, Pune is currently getting 1240 views in the last 30 days, with 29 calls and a CTR of 4.1%. By verifying your Google Business Profile, you can potentially increase these numbers by 34%. You already have attractive offers like Monthly BP Monitoring @ Rs199 and Senior Citizen 10% Discount. Notably, 56 customers have lapsed, and retaining them could further boost your sales. Verification is simple and takes just 3 steps via the Google app. Meanwhile, prices of generic metformin SR are expected to drop by 22% next month due to new approvals, as per the DGCI release Apr 2026",
+      "body_len": 616,
+      "num_count": 12,
+      "decision_quality": 9.0,
+      "specificity": 9.0,
+      "category_fit": 9.0,
+      "merchant_fit": 9.0,
+      "engagement_compulsion": 7.0,
+      "total": 43.0,
+      "penalties": 0.0,
+      "adjusted_total": 43.0,
+      "feedback": {
+        "strongest": "The message effectively combines trigger, merchant state, and category fit to provide a personalized and informative message.",
+        "weakest": "The message could be improved by adding a clearer call-to-action and a sense of urgency to reply now.",
+        "fix": "Adding a sentence like 'Verify your Google Business Profile now in 3 easy steps to start seeing the benefits' could raise the engagement compulsion score."
+      }
+    }
+  ]
+}

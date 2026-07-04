@@ -1,0 +1,8 @@
+.env
+.env.example
+__pycache__
+*.pyc
+*.log
+score_test_report.json
+score_tester_output.log
+e2e_results.log
